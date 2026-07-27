@@ -1,82 +1,166 @@
 # TokenLens
 
-**AI usage monitoring & waste intelligence platform.**
+**AI spend analytics and waste intelligence.**
 
-TokenLens ingests API usage logs, classifies what people are actually using AI for, estimates what each task *should* have cost, and scores the gap.
+Observability platforms (Helicone, Langfuse, LiteLLM) report what you spent.
+TokenLens estimates what you *should* have spent and scores the gap. It is a
+judgment layer over their exports, not a competing dashboard — point it at a
+usage log and it tells you which of that spend was defensible.
 
-Observability platforms (Helicone, Langfuse, LiteLLM) report what you spent. TokenLens estimates what you should have spent and quantifies the difference. That's a judgment layer, not a reporting layer — and it's the entire contribution of this project.
+Built as a portfolio project, and validated against real Claude Code usage rather
+than invented data.
 
-> **Status:** Pre-build. This README is generated from the [PRD](Documents/TokenLens_PRD_v2.docx) and will be rewritten to reflect the actual implementation as code lands.
+## What it does
 
-## The Problem
+1. **Ingests** usage logs — Claude Code session JSONL today, with a common
+   `Turn`/`Call` model that single-shot exports (Helicone, OpenRouter) drop into.
+2. **Prices** every call, cache-aware, from a dated rate table.
+3. **Classifies** each prompt by task category and complexity via Claude Haiku,
+   escalating ambiguous ones to Sonnet.
+4. **Scores** waste in dollars: model overshoot, context bloat, zero-value usage.
+5. **Presents** it — CLI reports and a React dashboard.
 
-Token-metered pricing means AI cost scales with usage in ways that are invisible until the invoice arrives:
+## Three findings that changed the design
 
-- A verbose or poorly structured prompt can cost many times more than a tight one for the same result.
-- Users default to the most capable (most expensive) model regardless of task difficulty.
-- No feedback loop exists between the vendor invoice and individual usage behaviour.
+These came from inspecting real logs before writing the scorer. Each one would
+have produced confidently wrong numbers if the original spec had been built as
+written.
 
-Organisations can see the total spend; they can't see the composition — which of it was valuable, and which was waste.
+**Uncached input is ~0.0% of spend.** In the reference dataset, cost is 58% cache
+reads, 34% cache writes, 8% output — and **$0.004** of uncached input. The
+original bloat formula measured `input_tokens`, so it would have scored zero for
+every record no matter how bloated. Bloat is now measured on `cache_read` for
+agentic data, and cache writes are split by TTL because the 1-hour tier bills at
+2× base against the 5-minute tier's 1.25×.
 
-**Scope honesty:** headline AI-overspend incidents (e.g. unlimited seat licenses) are a different failure mode from per-call token waste. TokenLens addresses the question that comes *after* a spend cap is in place: given a fixed budget, which of this spend was worth it?
+**Naive parsing overstated spend by 64%.** Claude Code writes one record per
+*content block* of a response — thinking, text, tool_use — each repeating the same
+`message.id` and the same usage object, because that usage bills the whole
+response. Separately, a resumed session copies its predecessor's history forward
+under a new session id. Counting records instead of messages gave $71.82 where
+the truth was $25.84.
 
-## Approach
+**Overshoot and bloat double-counted.** Pricing bloat at the tier actually used
+bills the excess tokens twice, since overshoot already charges the model-choice
+delta across all of them. On the reference worked example that pushed reported
+waste *above* the amount spent. Pricing bloat at the **required** tier makes the
+components disjoint: they now sum to exactly `actual − ideal`, which is an
+asserted invariant.
 
-1. **Ingest** API usage logs (JSON/CSV) — model, tokens, timestamp, optional prompt text and user id.
-2. **Classify** each prompt on two independent axes via Claude Haiku: task **category** (coding, research, writing, summarization, busywork) and task **complexity** (trivial / moderate / complex), which maps to a required model tier.
-3. **Score** each prompt with a bounded, additive **Waste Score**:
+## The Waste Score
 
-   ```
-   waste_score = 45·overshoot + 35·bloat + 20·zero_value      → 0–100
-   ```
+Denominated in dollars, not weighted points. An earlier design used fixed weights
+(45 overshoot / 35 bloat / 20 zero-value), which invited "why 45 and not 40" with
+no real answer. Pricing the components directly removes the judgement call — the
+figure derives from the same rate sheet the vendor bills against.
 
-   - **overshoot** — using a more expensive model than the task required.
-   - **bloat** — prompt length beyond what the task type warrants (vs. a median-token lookup).
-   - **zero_value** — binary flag for busywork tasks where LLM use isn't justified at any tier.
+| Component | Definition |
+|---|---|
+| `overshoot_$` | Each call's tokens repriced on the reference model for the tier the task actually required |
+| `bloat_$` | Tokens beyond the corpus median for comparable work, priced at the **required** tier |
+| `zero_value` | Busywork forfeits its whole cost — no cheaper tier is the remedy |
+| `turn_efficiency` | Calls vs. the median for that difficulty. A diagnostic, never priced: that cost already sits in `cache_read` |
 
-4. **Present** a dashboard: spend overview, cost breakdown, a complexity-vs-model heatmap, a waste leaderboard with per-prompt rationale, and a savings estimate.
+Two invariants from the earlier formula are named regression tests:
 
-See the PRD (§5.3) for the full worked example and the design rationale for the weights.
+- Using a **cheaper** model than required never scores as waste. It flags
+  `under_provisioned` instead — that is a quality risk, not a saving.
+- A **bloated prompt on a correctly chosen model** still scores as waste. The old
+  multiplicative form multiplied bloat by an overshoot of zero, hiding half of
+  what it existed to measure.
 
-## Data Strategy
+Bloat is withheld entirely when a category/complexity cell has fewer than five
+comparable turns. A median over two turns is noise, and reporting it as a finding
+would be worse than reporting nothing.
 
-Real prompt text comes from public research datasets (WildChat, LMSYS-Chat-1M) so classification runs on genuine user language rather than invented examples. Model selection, timestamps, pricing, and usage patterns are a **synthetic layer calibrated against observed distributions** — no public dataset contains real per-call cost/model data at this granularity. Synthetic-derived figures are visually marked in the UI. PII is stripped before analysis.
+## Data
 
-Team/department analytics were deliberately cut — no public data source contains organisational structure, and fabricating it would undermine the rest of the dashboard.
+The real case study is the author's own Claude Code history — genuine per-request
+model, token, and timestamp values, priced from published rates. No public
+dataset of real per-call spend exists, because that is billing data and nobody
+publishes it.
+
+Current reference set: **58 turns, 513 requests, 8 sessions, $108.18** — averaging
+8.8 calls per prompt and peaking at 60. That agentic shape is why scoring happens
+per *turn* rather than per call.
+
+Only public, license-compliant data or the user's own exports are used. No
+authentication is bypassed and no private repositories are accessed.
 
 ## Validation
 
-A project claiming to score waste needs an answer to "how do you know it works":
+Classifier agreement is reported as **Cohen's kappa** alongside raw percent
+agreement, and kappa is the figure that carries the claim: on a skewed label mix,
+answering the most common class every time scores well on raw agreement while
+learning nothing.
 
-- 100 hand-labelled prompts (category + complexity), with a human-agreement baseline from independent labellers on a subset.
-- Classifier agreement reported per axis, plus a confusion matrix and named failure modes — not just an accuracy number.
-- Score sanity checks: no record scores non-zero purely from being under-provisioned, and a verbose prompt on a correct model still registers bloat.
+- **Complexity uses linearly weighted kappa**, since the axis is ordinal —
+  confusing trivial with complex is worse than confusing trivial with moderate.
+- **Agreement is reported before and after escalation.** Escalation costs money;
+  claiming it helps without the earlier number would be unfalsifiable.
+- **A second labeller gives the human-to-human ceiling.** A classifier matching
+  one labeller 80% of the time means something different depending on whether two
+  humans agree 95% or 80%.
 
-## Tech Stack
+```bash
+uv run python -m tokenlens.validate_cli export labels.csv --limit 100
+#  ... label by hand, before looking at classifier output ...
+uv run python -m tokenlens.validate_cli report labels.csv --second reviewer.csv
+```
 
-| Layer | Choice |
-|---|---|
-| Frontend | React + Recharts |
-| Backend | Python + FastAPI |
-| Classifier | Claude Haiku |
-| Storage | SQLite |
-| Hosting | Vercel + Railway |
+## Running it
 
-## Non-Goals
+**Backend** (Python 3.12+, [uv](https://docs.astral.sh/uv/)):
 
-Not a production SaaS product. No live API proxy or traffic interception. No multi-tenant auth/RBAC/SSO. No ROI attribution against external HR/PM systems. No team/department analytics (see Data Strategy).
+```bash
+cd backend && uv sync --extra dev && uv run pytest
+```
 
-## Roadmap
+```bash
+uv run python -m tokenlens.report                      # spend report
+uv run python -m tokenlens.classify_cli --dry-run      # cost preview, no API calls
+uv run uvicorn tokenlens.api:app --port 8000           # API
+```
 
-| Week | Deliverable |
-|---|---|
-| 1 | Synthetic generator + ingestion pipeline, end-to-end on fake data |
-| 2 | Classifier (category + complexity) via Haiku, with caching; real prompts swapped in |
-| 3 | Waste Score implementation with unit tests |
-| 4 | Dashboard: overview, breakdown, heatmap, leaderboard, savings estimate |
-| 5 | Validation run, README, demo video, deploy |
+**Dashboard** (Node 20.19+ or 22.12+ — see [frontend/README.md](frontend/README.md)):
+
+```bash
+cd frontend && npm install && npm run dev
+```
+
+Classification is the only step that costs money and requires `ANTHROPIC_API_KEY`.
+It never runs implicitly: `GET /api/analysis` serves what is already cached, and
+issuing new requests takes an explicit `POST /api/classify`. Results cache by
+content hash, so re-runs are free.
+
+## Scope and limits
+
+- **Not a production SaaS.** No auth, no multi-tenancy, no live proxy.
+- **The case study is personal-scale.** One developer's history is real, but it is
+  not an organisation's spend, and the org-scale framing rests on that
+  distinction being stated rather than glossed.
+- **Team analytics were cut.** No public source contains organisational
+  structure; fabricating the one field a "cost by team" view leads with would
+  undermine everything beside it.
+- **Rate tables drift.** The table is dated and versioned, and every reported
+  figure names the version that produced it.
+
+## Layout
+
+```
+backend/tokenlens/
+  pricing.py            cache-aware cost engine + dated rate table
+  models.py             Turn / Call — the shared data model
+  ingest/claude_code.py JSONL parsing, turn grouping, deduplication
+  classify/             Haiku classifier, confidence escalation, SQLite cache
+  scoring/              dollar-denominated Waste Score + corpus baselines
+  validation/           Cohen's kappa, confusion matrices, label sets
+  analysis.py           the payload the dashboard renders
+  api.py                FastAPI
+frontend/src/           React dashboard
+```
 
 ## Docs
 
-- [Product Requirements Document v2.0](Documents/TokenLens_PRD_v2.docx) — current
-- [Product Requirements Document v1.0](Documents/TokenLens_PRD.docx) — superseded, kept for history
+- [PRD v2.1](Documents/TokenLens_PRD_v2.docx) — current
+- [PRD v1.0](Documents/TokenLens_PRD.docx) — superseded, kept for history
