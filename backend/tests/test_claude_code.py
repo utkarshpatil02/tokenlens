@@ -132,6 +132,17 @@ class TestDeduplication:
             t.call_count for t in parse_session(FIXTURE)
         )
 
+    def test_locally_fabricated_messages_are_not_billed(self, turns):
+        """Claude Code writes `<synthetic>` records for interrupt markers and
+        session-limit notices. No request was made, and the sentinel is not a
+        real model id, so the pricer would rightly refuse it."""
+        models = {c.model for t in turns for c in t.calls}
+        assert not any(m.startswith("<") for m in models)
+
+    def test_synthetic_record_does_not_consume_its_turn(self, by_prompt):
+        """The turn it attaches to keeps only its genuine calls."""
+        assert by_prompt["now write the tests"].call_count == 1
+
     def test_call_without_any_id_is_counted_rather_than_dropped(self, turns):
         """a6 has a requestId but the orphan path must still bill it."""
         unattributed = next(t for t in turns if "unattributed" in t.turn_id)

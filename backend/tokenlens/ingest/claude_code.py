@@ -50,6 +50,14 @@ _INJECTED_PREFIX_SCAN = 60
 # practice; the bound just prevents a malformed file from hanging the parser.
 _MAX_PARENT_WALK = 500
 
+# Claude Code fabricates assistant messages locally for things no model
+# produced — interrupt markers, session-limit notices — and labels them with an
+# angle-bracketed sentinel such as `<synthetic>` in place of a model id. They
+# carry an all-zero usage block because no request was made, so they are not
+# billable calls and must not reach the pricer, which correctly refuses to price
+# a model it has no rates for.
+_SENTINEL_MODEL_PREFIX = "<"
+
 
 def parse_session(
     path: Path | str, seen_message_ids: set[str] | None = None
@@ -175,6 +183,8 @@ def _extract_call(record: dict) -> Call | None:
     model = message.get("model")
     timestamp = _parse_timestamp(record.get("timestamp"))
     if not model or timestamp is None:
+        return None
+    if model.startswith(_SENTINEL_MODEL_PREFIX):
         return None
 
     # Cache writes are split by TTL because the two tiers price differently
