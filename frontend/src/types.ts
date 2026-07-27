@@ -118,6 +118,8 @@ export interface Analysis {
   calls_per_turn: CallsPerTurnRow[]
   /** Null until prompts have been classified — not zero. */
   waste: Waste | null
+  /** Present only on a frozen snapshot served without a backend. */
+  snapshot?: { static: boolean; prompts_redacted: boolean }
 }
 
 export interface Health {

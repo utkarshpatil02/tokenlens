@@ -80,6 +80,22 @@ export default function App() {
         </p>
       </header>
 
+      {analysis.snapshot?.static && (
+        <div className="notice" style={{ marginBottom: 4 }}>
+          <h3>Frozen snapshot</h3>
+          <p>
+            These are real figures from one developer's Claude Code history, captured{' '}
+            {new Date(analysis.generated_at).toLocaleDateString()}. There is no backend
+            here — analysis reads local session logs, which exist only on the machine
+            that produced them.
+            {analysis.snapshot.prompts_redacted &&
+              ' Prompt text is redacted; every figure is unmodified.'}{' '}
+            Run it against your own logs from{' '}
+            <a href="https://github.com/utkarshpatil02/tokenlens">the repository</a>.
+          </p>
+        </div>
+      )}
+
       <section>
         <div className="section-head">
           <h2>Overview</h2>
