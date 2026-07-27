@@ -89,6 +89,15 @@ models:
     cache_write_5m: 0.15
     cache_write_1h: 0.15
 
+# The model each tier is priced against when answering "what should this have
+# cost". Overshoot is the difference between what a call actually cost and what
+# the same tokens would have cost on the reference model for the required tier,
+# so the counterfactual is a named model rather than an abstract discount.
+tier_reference:
+  1: claude-haiku-4-5
+  2: claude-sonnet-5
+  3: claude-opus-5
+
 # Prefix rules for models absent from the table above, so a newly released
 # point version still prices instead of raising. Longest prefix wins.
 prefix_fallbacks:

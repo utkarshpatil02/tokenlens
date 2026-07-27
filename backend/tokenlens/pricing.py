@@ -80,6 +80,9 @@ class PriceTable:
         self.updated: date = _as_date(data["updated"])
         self.currency: str = data.get("currency", "USD")
         self._models: dict[str, dict] = data["models"]
+        self._tier_reference: dict[int, str] = {
+            int(tier): model for tier, model in data.get("tier_reference", {}).items()
+        }
         # Longest prefix first, so `gpt-4o-mini` wins over `gpt-4o`.
         self._prefixes: list[tuple[str, str]] = sorted(
             data.get("prefix_fallbacks", {}).items(),
@@ -145,6 +148,34 @@ class PriceTable:
             ),
             Decimal(0),
         )
+
+    def reference_model(self, tier: int) -> str:
+        """The model a tier is priced against for counterfactual costing."""
+        try:
+            return self._tier_reference[tier]
+        except KeyError:
+            raise UnknownModelError(
+                f"no reference model configured for tier {tier}"
+            ) from None
+
+    def cost_at_tier(self, call: Call, tier: int) -> Decimal:
+        """What this call's tokens would have cost on the given tier.
+
+        The whole call is repriced, not just its input, because output is a
+        material share of cost and is charged at a different multiple on every
+        model. Token counts are held constant: this answers "the same work on a
+        cheaper model", not "a cheaper model would have produced less".
+        """
+        substitute = Call(
+            model=self.reference_model(tier),
+            timestamp=call.timestamp,
+            input_tokens=call.input_tokens,
+            output_tokens=call.output_tokens,
+            cache_read=call.cache_read,
+            cache_write_5m=call.cache_write_5m,
+            cache_write_1h=call.cache_write_1h,
+        )
+        return self.cost_of(substitute)
 
     def cost_breakdown(self, call: Call) -> dict[str, Decimal]:
         """Cost of one call split by token category.
