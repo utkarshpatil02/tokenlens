@@ -15,3 +15,6 @@ dist/
 # Local data / secrets
 .env
 *.db
+
+# Frontend build output
+frontend/dist/

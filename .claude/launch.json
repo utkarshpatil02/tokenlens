@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "C:\\Coding\\TokenLens\\backend\\.venv\\Scripts\\uvicorn.exe",
+      "runtimeArgs": ["tokenlens.api:app", "--port", "8000"],
+      "cwd": "C:\\Coding\\TokenLens\\backend",
+      "port": 8000
+    },
+    {
+      "name": "dashboard",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\npm.cmd",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5173"],
+      "cwd": "C:\\Coding\\TokenLens\\frontend",
+      "port": 5173
+    }
+  ]
+}

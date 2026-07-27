@@ -1,0 +1,468 @@
+:root {
+  --bg: #ffffff;
+  --panel: #fafafa;
+  --border: #e4e4e8;
+  --text: #1b1b1e;
+  --muted: #6b6b73;
+  --faint: #9a9aa2;
+
+  --accent: #6d5fd4;
+  --accent-soft: #efedfb;
+
+  --ok: #4a9d6f;
+  --warn: #d19a4a;
+  --bad: #d1704a;
+  --crit: #b83d3d;
+
+  /* Token categories are parts of one whole, so they use sequential steps of a
+     single hue rather than unrelated categorical colours. */
+  --c1: #6d5fd4;
+  --c2: #8d80e0;
+  --c3: #aca3ea;
+  --c4: #c9c3f2;
+  --c5: #e2dff9;
+
+  --radius: 10px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16161a;
+    --panel: #1d1d21;
+    --border: #303038;
+    --text: #e9e9ec;
+    --muted: #9a9aa2;
+    --faint: #6b6b73;
+
+    --accent: #9c8ff0;
+    --accent-soft: #262046;
+
+    --ok: #5cb383;
+    --warn: #dda85c;
+    --bad: #e08260;
+    --crit: #d15757;
+
+    --c1: #9c8ff0;
+    --c2: #8477dd;
+    --c3: #6c5fc4;
+    --c4: #544aa0;
+    --c5: #3d367a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--accent);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* --- layout ------------------------------------------------------------ */
+
+.app {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.masthead h1 {
+  font-size: 20px;
+}
+
+.provenance {
+  font-size: 12px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.tagline {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 24px;
+  max-width: 62ch;
+}
+
+section {
+  margin-top: 30px;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.section-head h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.section-note {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* --- panels & stats ---------------------------------------------------- */
+
+.grid {
+  display: grid;
+  gap: 10px;
+}
+
+.stats {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.panels-2 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.stat .value {
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat .label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.stat .sub {
+  font-size: 11.5px;
+  color: var(--faint);
+  margin-top: 3px;
+}
+
+.panel h3 {
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* --- bars -------------------------------------------------------------- */
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+}
+
+.bar-row .name {
+  width: 118px;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.bar-row .track {
+  flex: 1;
+  min-width: 40px;
+  height: 16px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar-row .fill {
+  height: 100%;
+}
+
+.bar-row .amount {
+  width: 92px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-row .meta {
+  width: 62px;
+  text-align: right;
+  flex-shrink: 0;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- tables ------------------------------------------------------------ */
+
+.scroll-x {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+td.num,
+th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.prompt-cell {
+  min-width: 260px;
+  max-width: 380px;
+}
+
+.rationale {
+  color: var(--faint);
+  font-size: 11.5px;
+  margin-top: 2px;
+}
+
+/* --- pills ------------------------------------------------------------- */
+
+.pill {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pill.accent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.pill.band-efficient {
+  background: color-mix(in srgb, var(--ok) 16%, transparent);
+  color: var(--ok);
+}
+
+.pill.band-moderate {
+  background: color-mix(in srgb, var(--warn) 18%, transparent);
+  color: var(--warn);
+}
+
+.pill.band-high {
+  background: color-mix(in srgb, var(--bad) 18%, transparent);
+  color: var(--bad);
+}
+
+.pill.band-critical {
+  background: color-mix(in srgb, var(--crit) 18%, transparent);
+  color: var(--crit);
+}
+
+/* --- heatmap ----------------------------------------------------------- */
+
+.heatmap {
+  border-collapse: separate;
+  border-spacing: 3px;
+  font-size: 12px;
+}
+
+.heatmap th {
+  border: none;
+  padding: 4px 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11.5px;
+}
+
+.heatmap td {
+  border: none;
+  padding: 9px 10px;
+  border-radius: 6px;
+  background: var(--panel);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  min-width: 74px;
+}
+
+.heatmap td.empty {
+  color: var(--faint);
+  background: transparent;
+  border: 1px dashed var(--border);
+}
+
+.heatmap td.overshoot {
+  border: 1px solid color-mix(in srgb, var(--crit) 40%, transparent);
+}
+
+.heatmap td .cell-cost {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+}
+
+/* --- notices ----------------------------------------------------------- */
+
+.notice {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: var(--panel);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 13px 16px;
+}
+
+.notice h3 {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.notice p {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+  max-width: 70ch;
+}
+
+.notice code {
+  background: var(--border);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11.5px;
+}
+
+.notice.error {
+  border-left-color: var(--crit);
+}
+
+button {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 550;
+  padding: 6px 13px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.center {
+  padding: 72px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 9px;
+}
+
+.legend .swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+@media (max-width: 560px) {
+  .bar-row .name {
+    width: 88px;
+  }
+  .bar-row .meta {
+    display: none;
+  }
+}
