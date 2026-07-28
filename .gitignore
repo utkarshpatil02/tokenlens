@@ -16,5 +16,10 @@ dist/
 .env
 *.db
 
+# Label sheets contain verbatim prompt text. This repository is public, so
+# committing one would publish everything the prompts say.
+labels*.csv
+*labels.csv
+
 # Frontend build output
 frontend/dist/
