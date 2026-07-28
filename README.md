@@ -146,6 +146,19 @@ It never runs implicitly: `GET /api/analysis` serves what is already cached, and
 issuing new requests takes an explicit `POST /api/classify`. Results cache by
 content hash, so re-runs are free.
 
+**Running it without an API key.** Hand labels stand in for classifier output, so
+scoring, the heatmap, and the leaderboard all work for nothing:
+
+```bash
+uv run python -m tokenlens.validate_cli export labels.csv   # then label by hand
+TOKENLENS_LABELS=labels.csv uv run uvicorn tokenlens.api:app --port 8000
+```
+
+This is not a degraded mode — for the turns covered, a human judgement is a
+better input than a prediction. What it cannot do is measure the classifier, so
+results are stamped `hand-labelled` and validation refuses to score labels
+against themselves, which would report perfect agreement and prove nothing.
+
 ## Scope and limits
 
 - **Not a production SaaS.** No auth, no multi-tenancy, no live proxy.

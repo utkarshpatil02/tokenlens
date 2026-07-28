@@ -16,6 +16,7 @@ from tokenlens.validation.metrics import (
 )
 from tokenlens.validation.report import (
     COMPLEXITY_ORDER,
+    SelfComparisonError,
     ValidationReport,
     build_report,
     format_report,
@@ -28,6 +29,7 @@ __all__ = [
     "Label",
     "LabelError",
     "LabelSet",
+    "SelfComparisonError",
     "Strength",
     "ValidationReport",
     "agreement",

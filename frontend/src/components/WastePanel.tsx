@@ -58,15 +58,27 @@ export function WasteSummary({ waste }: { waste: Waste }) {
             </div>
           ))}
         </div>
-        {waste.flags.escalated > 0 && (
-          <div className="legend">
+        <div className="legend">
+          {waste.source === 'classifier' ? (
+            waste.flags.escalated > 0 && (
+              <span>
+                {waste.flags.escalated} prompt
+                {waste.flags.escalated === 1 ? '' : 's'} escalated to a stronger
+                classifier; {waste.flags.escalation_changed_tier} changed the required
+                tier
+              </span>
+            )
+          ) : (
             <span>
-              {waste.flags.escalated} prompt
-              {waste.flags.escalated === 1 ? '' : 's'} escalated to a stronger
-              classifier; {waste.flags.escalation_changed_tier} changed the required tier
+              Scored from{' '}
+              {waste.source === 'hand-labelled'
+                ? 'hand labels'
+                : 'hand labels and classifier output'}
+              , not classifier predictions alone — so these figures say nothing about
+              classifier accuracy.
             </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </>
   )

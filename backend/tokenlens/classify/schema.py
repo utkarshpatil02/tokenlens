@@ -44,6 +44,13 @@ REQUIRED_TIER: dict[Complexity, int] = {
     Complexity.COMPLEX: 3,
 }
 
+# Hand labels can stand in for classifier output so the pipeline runs without
+# spending anything. They carry this prefix in `model` so nothing downstream
+# mistakes a human judgement for a prediction — validation in particular must
+# refuse to score labels against themselves, which would report perfect
+# agreement and mean nothing at all.
+HUMAN_MODEL_PREFIX = "human:"
+
 
 def required_tier(complexity: Complexity) -> int:
     return REQUIRED_TIER[complexity]
@@ -92,6 +99,11 @@ class Classification:
     def is_zero_value(self) -> bool:
         """Busywork: a task where LLM use is not justified at any tier."""
         return self.category is Category.BUSYWORK
+
+    @property
+    def is_human(self) -> bool:
+        """Whether this is a hand label standing in for a prediction."""
+        return self.model.startswith(HUMAN_MODEL_PREFIX)
 
     @property
     def complexity_changed_on_escalation(self) -> bool:

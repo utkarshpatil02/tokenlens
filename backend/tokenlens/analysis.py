@@ -160,6 +160,9 @@ class Analysis:
             "waste_share": _share(total_waste, scored_cost),
             "scored_turns": len(self.scores),
             "unmeasured_bloat_turns": sum(1 for s in self.scores if not s.bloat_measured),
+            # The dashboard says which produced these figures, so a hand-labelled
+            # run is never mistaken for a classified one.
+            "source": self._classification_source(),
             "components": {
                 "overshoot": _money(sum((s.overshoot_cost for s in self.scores), Decimal(0))),
                 "bloat": _money(sum((s.bloat_cost for s in self.scores), Decimal(0))),
@@ -182,6 +185,18 @@ class Analysis:
                 ),
             },
         }
+
+    def _classification_source(self) -> str:
+        """Where the labels behind the waste figures came from."""
+        scored_ids = {s.turn_id for s in self.scores}
+        human = sum(
+            1
+            for turn_id, found in self.classifications.items()
+            if turn_id in scored_ids and found.is_human
+        )
+        if not human:
+            return "classifier"
+        return "hand-labelled" if human == len(scored_ids) else "mixed"
 
     def _bands(self) -> list[dict]:
         counts: Counter[str] = Counter()
@@ -276,11 +291,18 @@ def build_analysis(
     cache_path: Path | str | None = None,
     table: PriceTable | None = None,
     classify: bool = False,
+    labels_path: Path | str | None = None,
 ) -> Analysis:
     """Build an analysis from local logs.
 
     Classification is read from cache only unless `classify` is set, so opening
     the dashboard never silently spends money on API calls.
+
+    `labels_path` supplies hand labels where classifier output would go, which
+    makes the whole waste analysis work without an API key. Labels take
+    precedence over cached predictions for the turns they cover: a human
+    judgement is the better input, and mixing the two silently would make it
+    impossible to say which produced a given figure.
     """
     table = table or default_table()
     turns = parse_projects(projects_path)
@@ -292,6 +314,17 @@ def build_analysis(
         if classify
         else _cached_only(classifier, turns)
     )
+
+    if labels_path is not None:
+        from tokenlens.validation.labels import LabelSet
+
+        labelled = LabelSet.load(labels_path).to_classifications()
+        known = {t.turn_id for t in turns}
+        classifications |= {
+            turn_id: found
+            for turn_id, found in labelled.items()
+            if turn_id in known
+        }
 
     baseline = BloatBaseline.from_turns(turns, classifications)
     scorer = Scorer(

@@ -28,6 +28,15 @@ from tokenlens.validation.metrics import Agreement, agreement, confusion_grid
 COMPLEXITY_ORDER = tuple(c.value for c in Complexity)
 
 
+class SelfComparisonError(ValueError):
+    """Raised when the 'predictions' are the hand labels themselves.
+
+    Hand labels can stand in for classifier output so the pipeline runs for
+    free. Comparing that stand-in against the labels it came from would report
+    perfect agreement and prove nothing, so it is refused rather than reported.
+    """
+
+
 @dataclass(slots=True)
 class ValidationReport:
     labelled: int
@@ -91,6 +100,15 @@ def build_report(
     """
     by_id = {t.turn_id: t for t in turns}
     turn_ids = sorted(set(labels.turn_ids) & set(classifications))
+
+    human_sourced = [i for i in turn_ids if classifications[i].is_human]
+    if human_sourced and len(human_sourced) == len(turn_ids):
+        raise SelfComparisonError(
+            "the classifications supplied are hand labels, not predictions, so "
+            "comparing them against the label set would report perfect agreement "
+            "and measure nothing. Run the classifier "
+            "(python -m tokenlens.classify_cli) to produce predictions to validate."
+        )
 
     ref_category: list[str] = []
     ref_complexity: list[str] = []

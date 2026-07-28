@@ -16,7 +16,14 @@ import csv
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from tokenlens.classify.schema import Category, Complexity
+from pathlib import Path as _Path
+
+from tokenlens.classify.schema import (
+    HUMAN_MODEL_PREFIX,
+    Category,
+    Classification,
+    Complexity,
+)
 from tokenlens.models import Turn
 
 FIELDS = ("turn_id", "prompt", "category", "complexity", "notes")
@@ -60,6 +67,34 @@ class LabelSet:
     def overlap(self, other: LabelSet) -> list[str]:
         """Turn ids both label, in a stable order for aligned comparison."""
         return sorted(self.turn_ids & other.turn_ids)
+
+    def to_classifications(self) -> dict[str, Classification]:
+        """Use hand labels where classifier output would go.
+
+        This is the free path: scoring, the heatmap, and the leaderboard all
+        work from labels alone, so the pipeline runs end to end without spending
+        anything. It is not a degraded mode — for the turns covered, a human
+        judgement is a better input than a prediction.
+
+        What it cannot do is measure the classifier, since there is no
+        prediction to compare against. Each result is stamped with a
+        `human:` model so that validation refuses to score labels against
+        themselves rather than reporting a meaningless perfect agreement.
+
+        Confidence is 1.0 because these are the reference labels, not a
+        prediction carrying uncertainty.
+        """
+        source = _Path(self.source).name if self.source else "labels"
+        return {
+            turn_id: Classification(
+                category=label.category,
+                complexity=label.complexity,
+                confidence=1.0,
+                rationale=label.notes or "hand-labelled",
+                model=f"{HUMAN_MODEL_PREFIX}{source}",
+            )
+            for turn_id, label in self.labels.items()
+        }
 
     @classmethod
     def load(cls, path: Path | str) -> LabelSet:

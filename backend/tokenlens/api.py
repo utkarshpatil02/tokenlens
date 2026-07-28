@@ -29,6 +29,11 @@ from tokenlens.report import DEFAULT_PROJECTS
 PROJECTS_PATH = Path(os.getenv("TOKENLENS_PROJECTS", DEFAULT_PROJECTS))
 CACHE_PATH = Path(os.getenv("TOKENLENS_CACHE", DEFAULT_CACHE))
 
+# Hand labels stand in for classifier output, so the waste analysis works with
+# no API key at all.
+_labels = os.getenv("TOKENLENS_LABELS")
+LABELS_PATH = Path(_labels) if _labels else None
+
 app = FastAPI(title="TokenLens", version=__version__)
 
 # The Vite dev server runs on a different origin during development.
@@ -53,6 +58,8 @@ def health() -> dict:
         "projects_path_exists": PROJECTS_PATH.exists(),
         "cache_path": str(CACHE_PATH),
         "has_api_key": bool(os.getenv("ANTHROPIC_API_KEY")),
+        "labels_path": str(LABELS_PATH) if LABELS_PATH else None,
+        "has_labels": bool(LABELS_PATH and LABELS_PATH.exists()),
     }
 
 
@@ -88,6 +95,14 @@ def _build(classify: bool) -> dict:
                 "point at a Claude Code projects directory."
             ),
         )
+    if LABELS_PATH is not None and not LABELS_PATH.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"TOKENLENS_LABELS points at a missing file: {LABELS_PATH}",
+        )
     return build_analysis(
-        PROJECTS_PATH, cache_path=CACHE_PATH, classify=classify
+        PROJECTS_PATH,
+        cache_path=CACHE_PATH,
+        classify=classify,
+        labels_path=LABELS_PATH,
     ).to_payload()

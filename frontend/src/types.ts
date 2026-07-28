@@ -92,6 +92,8 @@ export interface Waste {
   waste_share: number
   scored_turns: number
   unmeasured_bloat_turns: number
+  /** Whether these figures came from the classifier or from hand labels. */
+  source: 'classifier' | 'hand-labelled' | 'mixed'
   components: {
     overshoot: string
     bloat: string
