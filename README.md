@@ -10,6 +10,11 @@ usage log and it tells you which of that spend was defensible.
 Built as a portfolio project, and validated against real Claude Code usage rather
 than invented data.
 
+**[Live demo →](https://utkarshpatil02.github.io/tokenlens/)** — real figures from
+one developer's history, with prompt text redacted. It is a frozen snapshot, not
+a live backend: analysis reads local session logs, which exist only on the
+machine that produced them.
+
 ## What it does
 
 1. **Ingests** usage logs — Claude Code session JSONL today, with a common
@@ -126,6 +131,14 @@ uv run uvicorn tokenlens.api:app --port 8000           # API
 
 ```bash
 cd frontend && npm install && npm run dev
+```
+
+**Publishing a snapshot.** The deployed site is static, so it serves a frozen
+export. Prompt text is redacted by default and an assertion fails the export if
+any survives; the CI workflow re-checks before deploying.
+
+```bash
+uv run python -m tokenlens.snapshot ../frontend/public/snapshot.json
 ```
 
 Classification is the only step that costs money and requires `ANTHROPIC_API_KEY`.
