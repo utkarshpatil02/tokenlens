@@ -440,6 +440,216 @@ button:disabled {
   color: var(--muted);
 }
 
+/* --- upload & column mapping ------------------------------------------- */
+
+.badge-private {
+  border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
+  color: var(--ok);
+  border-radius: 999px;
+  padding: 1px 9px;
+  font-size: 11px;
+}
+
+.dropzone {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  padding: 34px 20px;
+  text-align: center;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.dropzone.dragging {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.drop-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.drop-sub {
+  margin: 5px auto 0;
+  max-width: 54ch;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.drop-actions {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  margin: 16px 0 0;
+  flex-wrap: wrap;
+}
+
+.drop-privacy {
+  margin: 14px 0 0;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+/* Matches `button` so the file input's label does not read as a second style. */
+.button-like {
+  font-size: 12.5px;
+  font-weight: 550;
+  padding: 6px 13px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.button-like:hover,
+button.primary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button.primary {
+  background: var(--accent-soft);
+}
+
+/* The file input is visually hidden, so the label carries the focus ring. */
+.button-like:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.mapper-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.mapper-head h3 {
+  font-size: 14px;
+}
+
+.mapper-head .section-note {
+  margin-top: 2px;
+}
+
+.mapper-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.mapper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mapper-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mapper-label {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.mapper-label .req {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+select {
+  font: inherit;
+  font-size: 12.5px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  width: 100%;
+}
+
+.mapper-check {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  font-size: 12.5px;
+  margin-bottom: 14px;
+}
+
+.mapper-check input {
+  margin-top: 2px;
+}
+
+.mapper-hint {
+  display: block;
+  color: var(--muted);
+  font-size: 11.5px;
+  max-width: 70ch;
+  margin-top: 2px;
+}
+
+.mapper-hint code {
+  background: var(--border);
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.preview th.mapped {
+  color: var(--accent);
+}
+
+.col-role {
+  display: block;
+  font-weight: 400;
+  font-size: 10px;
+  color: var(--faint);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.result .grid.stats {
+  margin-bottom: 14px;
+}
+
+.findings {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.findings li {
+  margin-bottom: 3px;
+}
+
+.findings li.quiet {
+  color: var(--faint);
+}
+
+.issues {
+  margin-top: 14px;
+  font-size: 12.5px;
+}
+
+.issues summary {
+  cursor: pointer;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+
 .legend {
   display: flex;
   gap: 14px;

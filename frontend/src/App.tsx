@@ -4,6 +4,7 @@ import { fetchAnalysis, fetchHealth, runClassification } from './api'
 import { CallsPerTurn, CostBreakdown } from './components/CostBreakdown'
 import { Leaderboard } from './components/Leaderboard'
 import { Overview } from './components/Overview'
+import { IngestPanel } from './components/IngestPanel'
 import { Heatmap, WasteSummary } from './components/WastePanel'
 import { usd } from './format'
 import type { Analysis, Health } from './types'
@@ -50,6 +51,9 @@ export default function App() {
           <p>{error}</p>
           <button onClick={() => void load()}>Retry</button>
         </div>
+        {/* The upload path reads no backend and no snapshot, so it still works
+            when the reference figures cannot be loaded at all. */}
+        <IngestPanel />
       </div>
     )
   }
@@ -79,6 +83,11 @@ export default function App() {
           spent and scores the gap, measured against real Claude Code history.
         </p>
       </header>
+
+      {/* Ahead of the reference figures: a visitor with an export of their own
+          should not have to scroll past someone else's numbers to find the
+          thing that reads theirs. */}
+      <IngestPanel />
 
       {analysis.snapshot?.static && (
         <div className="notice" style={{ marginBottom: 4 }}>

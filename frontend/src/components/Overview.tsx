@@ -12,8 +12,12 @@ export function Overview({ data }: Props) {
       <div className="panel stat">
         <div className="value">{usd(data.total_cost)}</div>
         <div className="label">total spend</div>
+        {/* An uploaded export often carries no session column at all, and
+            "across 0 sessions" reads as a bug rather than as absent data. */}
         <div className="sub">
-          across {data.sessions} session{data.sessions === 1 ? '' : 's'}
+          {data.sessions > 0
+            ? `across ${data.sessions} session${data.sessions === 1 ? '' : 's'}`
+            : 'no session ids in this source'}
         </div>
       </div>
 
