@@ -1,0 +1,146 @@
+name: CI
+
+# Tests both halves of the project and the guards that keep them agreeing.
+#
+# `workflow_dispatch` is here deliberately: a push to master has already been
+# observed not to trigger a workflow in this repository, and a check that
+# silently never runs is worse than no check at all, because it reads as green.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Superseded runs on the same branch are worth cancelling; unlike a deploy,
+# nothing is left half-finished.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/pyproject.toml
+
+      - name: Install
+        working-directory: backend
+        # `--extra dev` brings pytest; httpx arrives via the dev dependency
+        # group, which uv syncs by default and FastAPI's TestClient needs.
+        run: uv sync --extra dev
+
+      - name: Test
+        working-directory: backend
+        run: uv run pytest -q
+
+  frontend:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # The Vite toolchain requires 20.19+ or 22.12+; on anything older npm
+          # silently skips rolldown's native binding and the build fails with an
+          # unrelated-looking MODULE_NOT_FOUND.
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Test
+        working-directory: frontend
+        run: npm run test
+
+      - name: Types
+        working-directory: frontend
+        run: npx tsc -b
+
+      - name: Lint
+        working-directory: frontend
+        # oxlint exits 0 on warnings by default, which would make this step
+        # pass no matter what it found.
+        run: npx oxlint --deny-warnings
+
+  drift:
+    name: Engine drift
+    runs-on: ubuntu-latest
+    # The same pricing and scoring rules exist twice, in Python for the CLI and
+    # in TypeScript for the browser. Both suites can be green while the two
+    # disagree about what a turn cost, so the fixtures the TypeScript tests
+    # check themselves against are generated from the Python and committed. If
+    # a rate moves in pricing.yaml, or a rule changes in analysis.py or
+    # scoring/, and the fixtures are not regenerated, this is what says so —
+    # otherwise the CLI and the published dashboard quietly drift apart with
+    # nothing to indicate which figure is right.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/pyproject.toml
+
+      - name: Install
+        working-directory: backend
+        run: uv sync --extra dev
+
+      - name: Rate table matches pricing.yaml
+        working-directory: backend
+        run: uv run python scripts/export_rates.py --check
+
+      - name: Pricing fixture matches the Python engine
+        working-directory: backend
+        run: uv run python scripts/export_pricing_golden.py --check
+
+      - name: Analysis fixture matches the Python engine
+        working-directory: backend
+        run: uv run python scripts/export_analysis_golden.py --check
+
+      - name: Scoring fixture matches the Python engine
+        working-directory: backend
+        run: uv run python scripts/export_scoring_golden.py --check
+
+  snapshot:
+    name: Snapshot redaction
+    runs-on: ubuntu-latest
+    # The deploy workflow already refuses to publish an unredacted snapshot, but
+    # only once the change has reached master. Checking the committed file here
+    # moves that from "caught at deploy" to "caught on the pull request", which
+    # matters because publishing is the one step that cannot be undone.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Committed snapshot carries no prompt text
+        run: |
+          node -e "
+            const s = require('./frontend/public/snapshot.json');
+            if (!s.snapshot?.static) throw new Error('snapshot is not marked static');
+            if (!s.snapshot?.prompts_redacted) {
+              throw new Error('snapshot is flagged as carrying verbatim prompts');
+            }
+            for (const row of s.waste?.leaderboard ?? []) {
+              for (const key of ['prompt', 'rationale']) {
+                const v = row[key];
+                if (v && !v.includes('redact') && v !== '(no prompt text)') {
+                  throw new Error('unredacted ' + key + ' is committed');
+                }
+              }
+            }
+            console.log('snapshot ok:', s.overview.calls, 'requests');
+          "
