@@ -1,0 +1,513 @@
+{
+  "rate_table": {
+    "version": 1,
+    "updated": "2026-07-26",
+    "currency": "USD"
+  },
+  "cases": [
+    {
+      "name": "claude-opus-5 agentic call",
+      "model": "claude-opus-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-opus-5",
+      "tier": 3,
+      "promotional": false,
+      "cost": "0.147994",
+      "breakdown": {
+        "input_tokens": "0.00001",
+        "output_tokens": "0.00715",
+        "cache_read": "0.017244",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.12359"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "claude-opus-4-8 agentic call",
+      "model": "claude-opus-4-8",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-opus-4-8",
+      "tier": 3,
+      "promotional": false,
+      "cost": "0.147994",
+      "breakdown": {
+        "input_tokens": "0.00001",
+        "output_tokens": "0.00715",
+        "cache_read": "0.017244",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.12359"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "claude-sonnet-5 agentic call",
+      "model": "claude-sonnet-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-sonnet-5",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.0887964",
+      "breakdown": {
+        "input_tokens": "0.000006",
+        "output_tokens": "0.00429",
+        "cache_read": "0.0103464",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.074154"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "claude-sonnet-4-6 agentic call",
+      "model": "claude-sonnet-4-6",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-sonnet-4-6",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.0887964",
+      "breakdown": {
+        "input_tokens": "0.000006",
+        "output_tokens": "0.00429",
+        "cache_read": "0.0103464",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.074154"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "claude-haiku-4-5 agentic call",
+      "model": "claude-haiku-4-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-haiku-4-5",
+      "tier": 1,
+      "promotional": false,
+      "cost": "0.0295988",
+      "breakdown": {
+        "input_tokens": "0.000002",
+        "output_tokens": "0.00143",
+        "cache_read": "0.0034488",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.024718"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "gpt-4o agentic call",
+      "model": "gpt-4o",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "gpt-4o",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.0768725",
+      "breakdown": {
+        "input_tokens": "0.000005",
+        "output_tokens": "0.00286",
+        "cache_read": "0.04311",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.0308975"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "gpt-4o-mini agentic call",
+      "model": "gpt-4o-mini",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "gpt-4o-mini",
+      "tier": 1,
+      "promotional": false,
+      "cost": "0.00461235",
+      "breakdown": {
+        "input_tokens": "0.0000003",
+        "output_tokens": "0.0001716",
+        "cache_read": "0.0025866",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.00185385"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "sonnet inside promo window",
+      "model": "claude-sonnet-5",
+      "timestamp": "2026-07-26T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-sonnet-5",
+      "tier": 2,
+      "promotional": true,
+      "cost": "0.0591976",
+      "breakdown": {
+        "input_tokens": "0.000004",
+        "output_tokens": "0.00286",
+        "cache_read": "0.0068976",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.049436"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0591976",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "sonnet on final promo moment",
+      "model": "claude-sonnet-5",
+      "timestamp": "2026-08-31T23:59:59+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-sonnet-5",
+      "tier": 2,
+      "promotional": true,
+      "cost": "0.0591976",
+      "breakdown": {
+        "input_tokens": "0.000004",
+        "output_tokens": "0.00286",
+        "cache_read": "0.0068976",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.049436"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0591976",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "sonnet after promo window",
+      "model": "claude-sonnet-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-sonnet-5",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.0887964",
+      "breakdown": {
+        "input_tokens": "0.000006",
+        "output_tokens": "0.00429",
+        "cache_read": "0.0103464",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.074154"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "sonnet with unknown date",
+      "model": "claude-sonnet-5",
+      "timestamp": null,
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-sonnet-5",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.0887964",
+      "breakdown": {
+        "input_tokens": "0.000006",
+        "output_tokens": "0.00429",
+        "cache_read": "0.0103464",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.074154"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "unlisted opus point version",
+      "model": "claude-opus-9-9",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "claude-opus-5",
+      "tier": 3,
+      "promotional": false,
+      "cost": "0.147994",
+      "breakdown": {
+        "input_tokens": "0.00001",
+        "output_tokens": "0.00715",
+        "cache_read": "0.017244",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.12359"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "unlisted gpt-4o-mini version",
+      "model": "gpt-4o-mini-2099",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "gpt-4o-mini",
+      "tier": 1,
+      "promotional": false,
+      "cost": "0.00461235",
+      "breakdown": {
+        "input_tokens": "0.0000003",
+        "output_tokens": "0.0001716",
+        "cache_read": "0.0025866",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.00185385"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "unlisted gpt-4o version",
+      "model": "gpt-4o-2099",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 2,
+        "output_tokens": 286,
+        "cache_read": 34488,
+        "cache_write_5m": 0,
+        "cache_write_1h": 12359
+      },
+      "resolved_model": "gpt-4o",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.0768725",
+      "breakdown": {
+        "input_tokens": "0.000005",
+        "output_tokens": "0.00286",
+        "cache_read": "0.04311",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0.0308975"
+      },
+      "cost_at_tier": {
+        "1": "0.0295988",
+        "2": "0.0887964",
+        "3": "0.147994"
+      }
+    },
+    {
+      "name": "zero token call",
+      "model": "claude-opus-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read": 0,
+        "cache_write_5m": 0,
+        "cache_write_1h": 0
+      },
+      "resolved_model": "claude-opus-5",
+      "tier": 3,
+      "promotional": false,
+      "cost": "0",
+      "breakdown": {
+        "input_tokens": "0",
+        "output_tokens": "0",
+        "cache_read": "0",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0"
+      },
+      "cost_at_tier": {
+        "1": "0",
+        "2": "0",
+        "3": "0"
+      }
+    },
+    {
+      "name": "single token",
+      "model": "claude-haiku-4-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 3,
+        "output_tokens": 0,
+        "cache_read": 0,
+        "cache_write_5m": 0,
+        "cache_write_1h": 0
+      },
+      "resolved_model": "claude-haiku-4-5",
+      "tier": 1,
+      "promotional": false,
+      "cost": "0.000003",
+      "breakdown": {
+        "input_tokens": "0.000003",
+        "output_tokens": "0",
+        "cache_read": "0",
+        "cache_write_5m": "0",
+        "cache_write_1h": "0"
+      },
+      "cost_at_tier": {
+        "1": "0.000003",
+        "2": "0.000009",
+        "3": "0.000015"
+      }
+    },
+    {
+      "name": "every category at once",
+      "model": "claude-opus-5",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 995,
+        "output_tokens": 392738,
+        "cache_read": 144867214,
+        "cache_write_5m": 7331,
+        "cache_write_1h": 4146598
+      },
+      "resolved_model": "claude-opus-5",
+      "tier": 3,
+      "promotional": false,
+      "cost": "123.76883075",
+      "breakdown": {
+        "input_tokens": "0.004975",
+        "output_tokens": "9.81845",
+        "cache_read": "72.433607",
+        "cache_write_5m": "0.04581875",
+        "cache_write_1h": "41.46598"
+      },
+      "cost_at_tier": {
+        "1": "24.75376615",
+        "2": "74.26129845",
+        "3": "123.76883075"
+      }
+    },
+    {
+      "name": "both cache TTLs",
+      "model": "claude-sonnet-4-6",
+      "timestamp": "2026-09-01T00:00:00+00:00",
+      "tokens": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_read": 0,
+        "cache_write_5m": 40000,
+        "cache_write_1h": 60000
+      },
+      "resolved_model": "claude-sonnet-4-6",
+      "tier": 2,
+      "promotional": false,
+      "cost": "0.51",
+      "breakdown": {
+        "input_tokens": "0",
+        "output_tokens": "0",
+        "cache_read": "0",
+        "cache_write_5m": "0.15",
+        "cache_write_1h": "0.36"
+      },
+      "cost_at_tier": {
+        "1": "0.17",
+        "2": "0.51",
+        "3": "0.85"
+      }
+    }
+  ]
+}
