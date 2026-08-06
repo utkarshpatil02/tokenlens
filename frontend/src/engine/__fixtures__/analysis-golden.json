@@ -1,0 +1,531 @@
+{
+  "cases": [
+    {
+      "name": "rich spread",
+      "turns": [
+        {
+          "turn_id": "t1",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "port the pricing engine to TypeScript",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-sonnet-4-6",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 12,
+              "output_tokens": 286,
+              "cache_read": 34488,
+              "cache_write_5m": 0,
+              "cache_write_1h": 12359
+            },
+            {
+              "model": "claude-sonnet-4-6",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 1204,
+              "cache_read": 46847,
+              "cache_write_5m": 2048,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-4-6",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 318,
+              "cache_read": 58203,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t2",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "rename a variable",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-haiku-4-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 120,
+              "output_tokens": 88,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t3",
+          "profile": "agentic",
+          "timestamp": "2026-07-26T00:00:00+00:00",
+          "prompt_text": null,
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-07-26T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 940,
+              "cache_read": 29115,
+              "cache_write_5m": 8800,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-07-26T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 612,
+              "cache_read": 33901,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t4",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "write tests for the CSV reader",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 940,
+              "cache_read": 29115,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 612,
+              "cache_read": 33901,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t5",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "explain prompt caching",
+          "session_id": null,
+          "calls": [
+            {
+              "model": "gpt-4o",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 800,
+              "output_tokens": 200,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "gpt-4o",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 800,
+              "output_tokens": 200,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "gpt-4o",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 800,
+              "output_tokens": 200,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "gpt-4o",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 800,
+              "output_tokens": 200,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "gpt-4o",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 800,
+              "output_tokens": 200,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t6",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "   ",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "gpt-4o-mini",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 40,
+              "output_tokens": 10,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t7",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "tie-break case A",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 1000,
+              "output_tokens": 500,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "t8",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "tie-break case B",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "claude-opus-4-8",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 1000,
+              "output_tokens": 500,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        }
+      ],
+      "payload": {
+        "rate_table": {
+          "version": 1,
+          "updated": "2026-07-26",
+          "currency": "USD"
+        },
+        "overview": {
+          "total_cost": "0.2987314",
+          "turns": 8,
+          "scorable_turns": 6,
+          "classified_turns": 0,
+          "calls": 16,
+          "mean_calls_per_turn": 2.0,
+          "total_tokens": 301959,
+          "sessions": 3
+        },
+        "cost_by_token_category": [
+          {
+            "category": "cache_read",
+            "label": "cache read",
+            "cost": "0.0733694",
+            "tokens": 265570,
+            "share": 0.2456
+          },
+          {
+            "category": "cache_write_1h",
+            "label": "cache write (1h)",
+            "cost": "0.074154",
+            "tokens": 12359,
+            "share": 0.2482
+          },
+          {
+            "category": "cache_write_5m",
+            "label": "cache write (5m)",
+            "cost": "0.02968",
+            "tokens": 10848,
+            "share": 0.0994
+          },
+          {
+            "category": "output_tokens",
+            "label": "output",
+            "cost": "0.101366",
+            "tokens": 7010,
+            "share": 0.3393
+          },
+          {
+            "category": "input_tokens",
+            "label": "input (uncached)",
+            "cost": "0.020162",
+            "tokens": 6172,
+            "share": 0.0675
+          }
+        ],
+        "cost_by_model": [
+          {
+            "model": "claude-sonnet-4-6",
+            "tier": 2,
+            "cost": "0.1508514",
+            "calls": 3,
+            "share": 0.505
+          },
+          {
+            "model": "claude-sonnet-5",
+            "tier": 2,
+            "cost": "0.0923080",
+            "calls": 4,
+            "share": 0.309
+          },
+          {
+            "model": "gpt-4o",
+            "tier": 2,
+            "cost": "0.020",
+            "calls": 5,
+            "share": 0.0669
+          },
+          {
+            "model": "claude-opus-5",
+            "tier": 3,
+            "cost": "0.0175",
+            "calls": 1,
+            "share": 0.0586
+          },
+          {
+            "model": "claude-opus-4-8",
+            "tier": 3,
+            "cost": "0.0175",
+            "calls": 1,
+            "share": 0.0586
+          },
+          {
+            "model": "claude-haiku-4-5",
+            "tier": 1,
+            "cost": "0.00056",
+            "calls": 1,
+            "share": 0.0019
+          },
+          {
+            "model": "gpt-4o-mini",
+            "tier": 1,
+            "cost": "0.000012",
+            "calls": 1,
+            "share": 0.0
+          }
+        ],
+        "calls_per_turn": [
+          {
+            "calls": 1,
+            "turns": 4
+          },
+          {
+            "calls": 2,
+            "turns": 2
+          },
+          {
+            "calls": 3,
+            "turns": 1
+          },
+          {
+            "calls": 5,
+            "turns": 1
+          }
+        ],
+        "waste": null
+      }
+    },
+    {
+      "name": "output tokens only",
+      "turns": [
+        {
+          "turn_id": "only",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "one line",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-haiku-4-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 1000,
+              "cache_read": 0,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        }
+      ],
+      "payload": {
+        "rate_table": {
+          "version": 1,
+          "updated": "2026-07-26",
+          "currency": "USD"
+        },
+        "overview": {
+          "total_cost": "0.005",
+          "turns": 1,
+          "scorable_turns": 1,
+          "classified_turns": 0,
+          "calls": 1,
+          "mean_calls_per_turn": 1.0,
+          "total_tokens": 1000,
+          "sessions": 1
+        },
+        "cost_by_token_category": [
+          {
+            "category": "output_tokens",
+            "label": "output",
+            "cost": "0.005",
+            "tokens": 1000,
+            "share": 1.0
+          }
+        ],
+        "cost_by_model": [
+          {
+            "model": "claude-haiku-4-5",
+            "tier": 1,
+            "cost": "0.005",
+            "calls": 1,
+            "share": 1.0
+          }
+        ],
+        "calls_per_turn": [
+          {
+            "calls": 1,
+            "turns": 1
+          }
+        ],
+        "waste": null
+      }
+    },
+    {
+      "name": "no turns at all",
+      "turns": [],
+      "payload": {
+        "rate_table": {
+          "version": 1,
+          "updated": "2026-07-26",
+          "currency": "USD"
+        },
+        "overview": {
+          "total_cost": "0",
+          "turns": 0,
+          "scorable_turns": 0,
+          "classified_turns": 0,
+          "calls": 0,
+          "mean_calls_per_turn": 0.0,
+          "total_tokens": 0,
+          "sessions": 0
+        },
+        "cost_by_token_category": [],
+        "cost_by_model": [],
+        "calls_per_turn": [],
+        "waste": null
+      }
+    }
+  ],
+  "rounding": [
+    {
+      "value": "0.125",
+      "digits": 2,
+      "expected": "0.12"
+    },
+    {
+      "value": "0.375",
+      "digits": 2,
+      "expected": "0.38"
+    },
+    {
+      "value": "0.15625",
+      "digits": 4,
+      "expected": "0.1562"
+    },
+    {
+      "value": "0.0625",
+      "digits": 3,
+      "expected": "0.062"
+    },
+    {
+      "value": "2.5",
+      "digits": 0,
+      "expected": "2.0"
+    },
+    {
+      "value": "3.5",
+      "digits": 0,
+      "expected": "4.0"
+    },
+    {
+      "value": "0.5",
+      "digits": 0,
+      "expected": "0.0"
+    },
+    {
+      "value": "1.5",
+      "digits": 0,
+      "expected": "2.0"
+    },
+    {
+      "value": "-0.125",
+      "digits": 2,
+      "expected": "-0.12"
+    },
+    {
+      "value": "-2.5",
+      "digits": 0,
+      "expected": "-2.0"
+    },
+    {
+      "value": "2.675",
+      "digits": 2,
+      "expected": "2.67"
+    },
+    {
+      "value": "8.955",
+      "digits": 2,
+      "expected": "8.96"
+    },
+    {
+      "value": "0.3333333333333333",
+      "digits": 4,
+      "expected": "0.3333"
+    },
+    {
+      "value": "0.6666666666666666",
+      "digits": 4,
+      "expected": "0.6667"
+    },
+    {
+      "value": "0.0001499",
+      "digits": 4,
+      "expected": "0.0001"
+    },
+    {
+      "value": "5e-05",
+      "digits": 4,
+      "expected": "0.0001"
+    },
+    {
+      "value": "123.456789",
+      "digits": 2,
+      "expected": "123.46"
+    },
+    {
+      "value": "0.0",
+      "digits": 4,
+      "expected": "0.0"
+    }
+  ]
+}

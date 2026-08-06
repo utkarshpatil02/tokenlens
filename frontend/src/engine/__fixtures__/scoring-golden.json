@@ -1,0 +1,2138 @@
+{
+  "cases": [
+    {
+      "name": "full corpus",
+      "turns": [
+        {
+          "turn_id": "complex0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "refactor module 0 without changing behaviour",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 30000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 30000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 30000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "complex1",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "refactor module 1 without changing behaviour",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 34000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 34000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 34000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "complex2",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "refactor module 2 without changing behaviour",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 36000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 36000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 36000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "complex3",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "refactor module 3 without changing behaviour",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 40000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 40000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 40000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "complex4",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "refactor module 4 without changing behaviour",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 44000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 44000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 44000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "complex5",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "refactor module 5 without changing behaviour",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 400000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 400000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 900,
+              "cache_read": 400000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "trivial0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "rename variable 0",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 60,
+              "cache_read": 5000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "trivial1",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "rename variable 1",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 60,
+              "cache_read": 6000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "trivial2",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "rename variable 2",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 60,
+              "cache_read": 7000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "trivial3",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "rename variable 3",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 60,
+              "cache_read": 8000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "trivial4",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "rename variable 4",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 60,
+              "cache_read": 9000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "writing0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "draft release notes 0",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 700,
+              "cache_read": 12000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 700,
+              "cache_read": 12000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "writing1",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "draft release notes 1",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 700,
+              "cache_read": 15000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 700,
+              "cache_read": 15000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "writing2",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "draft release notes 2",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 700,
+              "cache_read": 90000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 700,
+              "cache_read": 90000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "research0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "compare caching strategies 0",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 650,
+              "cache_read": 13000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 650,
+              "cache_read": 13000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "research1",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "compare caching strategies 1",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 650,
+              "cache_read": 16000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 650,
+              "cache_read": 16000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "research2",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "compare caching strategies 2",
+          "session_id": "s2",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 650,
+              "cache_read": 18000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            },
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 650,
+              "cache_read": 18000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "summary0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "summarise this changelog",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "claude-haiku-4-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 200,
+              "cache_read": 2000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "busywork0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "say thanks",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 40,
+              "cache_read": 20000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "under0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "design the migration plan",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "claude-haiku-4-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 800,
+              "cache_read": 35000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "unscored0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "no label for this one",
+          "session_id": "s3",
+          "calls": [
+            {
+              "model": "claude-sonnet-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 500,
+              "cache_read": 5000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        }
+      ],
+      "classifications": {
+        "complex0": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "human:reviewer",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "complex1": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "complex2": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "human:reviewer",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "complex3": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "complex4": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "human:reviewer",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "complex5": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "trivial0": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.935,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "trivial1": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.935,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "trivial2": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.935,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "trivial3": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.935,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "trivial4": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.935,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "writing0": {
+          "category": "writing",
+          "complexity": "moderate",
+          "confidence": 0.87,
+          "rationale": "moderate writing task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "writing1": {
+          "category": "writing",
+          "complexity": "moderate",
+          "confidence": 0.87,
+          "rationale": "moderate writing task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "writing2": {
+          "category": "writing",
+          "complexity": "moderate",
+          "confidence": 0.87,
+          "rationale": "moderate writing task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "research0": {
+          "category": "research",
+          "complexity": "moderate",
+          "confidence": 0.87,
+          "rationale": "moderate research task",
+          "model": "claude-haiku-4-5",
+          "escalated": true,
+          "base_complexity": "trivial"
+        },
+        "research1": {
+          "category": "research",
+          "complexity": "moderate",
+          "confidence": 0.87,
+          "rationale": "moderate research task",
+          "model": "claude-haiku-4-5",
+          "escalated": true,
+          "base_complexity": "trivial"
+        },
+        "research2": {
+          "category": "research",
+          "complexity": "moderate",
+          "confidence": 0.87,
+          "rationale": "moderate research task",
+          "model": "claude-haiku-4-5",
+          "escalated": true,
+          "base_complexity": "trivial"
+        },
+        "summary0": {
+          "category": "summarization",
+          "complexity": "trivial",
+          "confidence": 0.87,
+          "rationale": "trivial summarization task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "busywork0": {
+          "category": "busywork",
+          "complexity": "trivial",
+          "confidence": 0.87,
+          "rationale": "trivial busywork task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "under0": {
+          "category": "coding",
+          "complexity": "complex",
+          "confidence": 0.87,
+          "rationale": "complex coding task",
+          "model": "human:reviewer",
+          "escalated": false,
+          "base_complexity": null
+        }
+      },
+      "baseline": {
+        "metric": "cache_read",
+        "min_samples": 5,
+        "by_pair": {
+          "coding|complex": 108000,
+          "coding|trivial": 7000
+        },
+        "by_complexity": {
+          "complex": 108000,
+          "trivial": 7000,
+          "moderate": 31000.0
+        },
+        "sample_counts": {
+          "coding|complex": 7,
+          "coding|trivial": 5,
+          "writing|moderate": 3,
+          "research|moderate": 3,
+          "summarization|trivial": 1,
+          "busywork|trivial": 1
+        }
+      },
+      "calls_baseline": {
+        "complex": 3,
+        "trivial": 1,
+        "moderate": 2.0
+      },
+      "scores": [
+        {
+          "turn_id": "complex0",
+          "actual_cost": "0.1125",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 3,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 3,
+          "calls_baseline": 3,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "complex1",
+          "actual_cost": "0.1185",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 3,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 3,
+          "calls_baseline": 3,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "complex2",
+          "actual_cost": "0.1215",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 3,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 3,
+          "calls_baseline": 3,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "complex3",
+          "actual_cost": "0.1275",
+          "overshoot_cost": "0",
+          "bloat_cost": "0.006",
+          "estimated_waste": "0.006",
+          "tier_used": 3,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 12000,
+          "bloat_metric": "cache_read",
+          "call_count": 3,
+          "calls_baseline": 3,
+          "normalized": 5,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "trim 12,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "complex4",
+          "actual_cost": "0.1335",
+          "overshoot_cost": "0",
+          "bloat_cost": "0.012",
+          "estimated_waste": "0.012",
+          "tier_used": 3,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 24000,
+          "bloat_metric": "cache_read",
+          "call_count": 3,
+          "calls_baseline": 3,
+          "normalized": 9,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "trim 24,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "complex5",
+          "actual_cost": "0.6675",
+          "overshoot_cost": "0",
+          "bloat_cost": "0.546",
+          "estimated_waste": "0.546",
+          "tier_used": 3,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 1092000,
+          "bloat_metric": "cache_read",
+          "call_count": 3,
+          "calls_baseline": 3,
+          "normalized": 82,
+          "band": "critical",
+          "turn_efficiency": 1.0,
+          "recommendation": "trim 1,092,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "trivial0",
+          "actual_cost": "0.0040",
+          "overshoot_cost": "0.0032",
+          "bloat_cost": "0",
+          "estimated_waste": "0.0032",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 80,
+          "band": "high",
+          "turn_efficiency": 1.0,
+          "recommendation": "use a tier 1 model"
+        },
+        {
+          "turn_id": "trivial1",
+          "actual_cost": "0.0045",
+          "overshoot_cost": "0.0036",
+          "bloat_cost": "0",
+          "estimated_waste": "0.0036",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 80,
+          "band": "high",
+          "turn_efficiency": 1.0,
+          "recommendation": "use a tier 1 model"
+        },
+        {
+          "turn_id": "trivial2",
+          "actual_cost": "0.0050",
+          "overshoot_cost": "0.0040",
+          "bloat_cost": "0",
+          "estimated_waste": "0.0040",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 80,
+          "band": "high",
+          "turn_efficiency": 1.0,
+          "recommendation": "use a tier 1 model"
+        },
+        {
+          "turn_id": "trivial3",
+          "actual_cost": "0.0055",
+          "overshoot_cost": "0.0044",
+          "bloat_cost": "0.0001",
+          "estimated_waste": "0.0045",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 1000,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 82,
+          "band": "critical",
+          "turn_efficiency": 1.0,
+          "recommendation": "use a tier 1 model; trim 1,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "trivial4",
+          "actual_cost": "0.0060",
+          "overshoot_cost": "0.0048",
+          "bloat_cost": "0.0002",
+          "estimated_waste": "0.0050",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 2000,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 83,
+          "band": "critical",
+          "turn_efficiency": 1.0,
+          "recommendation": "use a tier 1 model; trim 2,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "writing0",
+          "actual_cost": "0.0282",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 2,
+          "tier_required": 2,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 2,
+          "calls_baseline": 2.0,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "writing1",
+          "actual_cost": "0.0300",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 2,
+          "tier_required": 2,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 2,
+          "calls_baseline": 2.0,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "writing2",
+          "actual_cost": "0.0750",
+          "overshoot_cost": "0",
+          "bloat_cost": "0.0447",
+          "estimated_waste": "0.0447",
+          "tier_used": 2,
+          "tier_required": 2,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 149000,
+          "bloat_metric": "cache_read",
+          "call_count": 2,
+          "calls_baseline": 2.0,
+          "normalized": 60,
+          "band": "high",
+          "turn_efficiency": 1.0,
+          "recommendation": "trim 149,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "research0",
+          "actual_cost": "0.02730",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 2,
+          "tier_required": 2,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 2,
+          "calls_baseline": 2.0,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "research1",
+          "actual_cost": "0.02910",
+          "overshoot_cost": "0",
+          "bloat_cost": "0.0003",
+          "estimated_waste": "0.0003",
+          "tier_used": 2,
+          "tier_required": 2,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 1000,
+          "bloat_metric": "cache_read",
+          "call_count": 2,
+          "calls_baseline": 2.0,
+          "normalized": 1,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "trim 1,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "research2",
+          "actual_cost": "0.03030",
+          "overshoot_cost": "0",
+          "bloat_cost": "0.0015",
+          "estimated_waste": "0.0015",
+          "tier_used": 2,
+          "tier_required": 2,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 5000,
+          "bloat_metric": "cache_read",
+          "call_count": 2,
+          "calls_baseline": 2.0,
+          "normalized": 5,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "trim 5,000 excess cache_read tokens"
+        },
+        {
+          "turn_id": "summary0",
+          "actual_cost": "0.0012",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 1,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 1.0,
+          "recommendation": "No waste detected"
+        },
+        {
+          "turn_id": "busywork0",
+          "actual_cost": "0.011",
+          "overshoot_cost": "0.0088",
+          "bloat_cost": "0.0013",
+          "estimated_waste": "0.011",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": true,
+          "under_provisioned": false,
+          "bloat_measured": true,
+          "excess_tokens": 13000,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 1,
+          "normalized": 100,
+          "band": "critical",
+          "turn_efficiency": 1.0,
+          "recommendation": "Task did not warrant a model call"
+        },
+        {
+          "turn_id": "under0",
+          "actual_cost": "0.0075",
+          "overshoot_cost": "0",
+          "bloat_cost": "0",
+          "estimated_waste": "0",
+          "tier_used": 1,
+          "tier_required": 3,
+          "zero_value": false,
+          "under_provisioned": true,
+          "bloat_measured": true,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": 3,
+          "normalized": 0,
+          "band": "efficient",
+          "turn_efficiency": 0.3333333333333333,
+          "recommendation": "check output quality: model was below the required tier"
+        }
+      ],
+      "payload": {
+        "rate_table": {
+          "version": 1,
+          "updated": "2026-07-26",
+          "currency": "USD"
+        },
+        "overview": {
+          "total_cost": "1.55460",
+          "turns": 21,
+          "scorable_turns": 21,
+          "classified_turns": 20,
+          "calls": 39,
+          "mean_calls_per_turn": 1.86,
+          "total_tokens": 2203140,
+          "sessions": 3
+        },
+        "cost_by_token_category": [
+          {
+            "category": "cache_read",
+            "label": "cache read",
+            "cost": "1.0071",
+            "tokens": 2177000,
+            "share": 0.6478
+          },
+          {
+            "category": "output_tokens",
+            "label": "output",
+            "cost": "0.54750",
+            "tokens": 26140,
+            "share": 0.3522
+          }
+        ],
+        "cost_by_model": [
+          {
+            "model": "claude-opus-5",
+            "tier": 3,
+            "cost": "1.3170",
+            "calls": 24,
+            "share": 0.8472
+          },
+          {
+            "model": "claude-sonnet-5",
+            "tier": 2,
+            "cost": "0.22890",
+            "calls": 13,
+            "share": 0.1472
+          },
+          {
+            "model": "claude-haiku-4-5",
+            "tier": 1,
+            "cost": "0.0087",
+            "calls": 2,
+            "share": 0.0056
+          }
+        ],
+        "calls_per_turn": [
+          {
+            "calls": 1,
+            "turns": 9
+          },
+          {
+            "calls": 2,
+            "turns": 6
+          },
+          {
+            "calls": 3,
+            "turns": 6
+          }
+        ],
+        "waste": {
+          "total_waste": "0.6418",
+          "scored_cost": "1.54560",
+          "waste_share": 0.4152,
+          "scored_turns": 20,
+          "unmeasured_bloat_turns": 0,
+          "source": "mixed",
+          "components": {
+            "overshoot": "0.0288",
+            "bloat": "0.6121",
+            "zero_value_cost": "0.011"
+          },
+          "bands": [
+            {
+              "band": "efficient",
+              "turns": 12,
+              "cost": "0.76710"
+            },
+            {
+              "band": "moderate",
+              "turns": 0,
+              "cost": "0"
+            },
+            {
+              "band": "high",
+              "turns": 4,
+              "cost": "0.0885"
+            },
+            {
+              "band": "critical",
+              "turns": 4,
+              "cost": "0.6900"
+            }
+          ],
+          "complexity_by_tier": [
+            {
+              "complexity": "trivial",
+              "required_tier": 1,
+              "tier_used": 1,
+              "turns": 1,
+              "cost": "0.0012",
+              "waste": "0"
+            },
+            {
+              "complexity": "trivial",
+              "required_tier": 1,
+              "tier_used": 3,
+              "turns": 6,
+              "cost": "0.0360",
+              "waste": "0.0313"
+            },
+            {
+              "complexity": "moderate",
+              "required_tier": 2,
+              "tier_used": 2,
+              "turns": 6,
+              "cost": "0.21990",
+              "waste": "0.0465"
+            },
+            {
+              "complexity": "complex",
+              "required_tier": 3,
+              "tier_used": 1,
+              "turns": 1,
+              "cost": "0.0075",
+              "waste": "0"
+            },
+            {
+              "complexity": "complex",
+              "required_tier": 3,
+              "tier_used": 3,
+              "turns": 6,
+              "cost": "1.2810",
+              "waste": "0.564"
+            }
+          ],
+          "category_distribution": [
+            {
+              "category": "coding",
+              "turns": 12,
+              "cost": "1.3135"
+            },
+            {
+              "category": "writing",
+              "turns": 3,
+              "cost": "0.1332"
+            },
+            {
+              "category": "research",
+              "turns": 3,
+              "cost": "0.08670"
+            },
+            {
+              "category": "busywork",
+              "turns": 1,
+              "cost": "0.011"
+            },
+            {
+              "category": "summarization",
+              "turns": 1,
+              "cost": "0.0012"
+            }
+          ],
+          "leaderboard": [
+            {
+              "turn_id": "complex5",
+              "prompt": "refactor module 5 without changing behaviour",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 3,
+              "actual_cost": "0.6675",
+              "estimated_waste": "0.546",
+              "overshoot": "0",
+              "bloat": "0.546",
+              "excess_tokens": 1092000,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 3,
+              "normalized": 82,
+              "band": "critical",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "trim 1,092,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "writing2",
+              "prompt": "draft release notes 2",
+              "category": "writing",
+              "complexity": "moderate",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "moderate writing task",
+              "calls": 2,
+              "actual_cost": "0.0750",
+              "estimated_waste": "0.0447",
+              "overshoot": "0",
+              "bloat": "0.0447",
+              "excess_tokens": 149000,
+              "bloat_measured": true,
+              "tier_used": 2,
+              "tier_required": 2,
+              "normalized": 60,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "trim 149,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "complex4",
+              "prompt": "refactor module 4 without changing behaviour",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 3,
+              "actual_cost": "0.1335",
+              "estimated_waste": "0.012",
+              "overshoot": "0",
+              "bloat": "0.012",
+              "excess_tokens": 24000,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 3,
+              "normalized": 9,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "trim 24,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "busywork0",
+              "prompt": "say thanks",
+              "category": "busywork",
+              "complexity": "trivial",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "trivial busywork task",
+              "calls": 1,
+              "actual_cost": "0.011",
+              "estimated_waste": "0.011",
+              "overshoot": "0.0088",
+              "bloat": "0.0013",
+              "excess_tokens": 13000,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 100,
+              "band": "critical",
+              "zero_value": true,
+              "under_provisioned": false,
+              "recommendation": "Task did not warrant a model call"
+            },
+            {
+              "turn_id": "complex3",
+              "prompt": "refactor module 3 without changing behaviour",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 3,
+              "actual_cost": "0.1275",
+              "estimated_waste": "0.006",
+              "overshoot": "0",
+              "bloat": "0.006",
+              "excess_tokens": 12000,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 3,
+              "normalized": 5,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "trim 12,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "trivial4",
+              "prompt": "rename variable 4",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.94,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0060",
+              "estimated_waste": "0.0050",
+              "overshoot": "0.0048",
+              "bloat": "0.0002",
+              "excess_tokens": 2000,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 83,
+              "band": "critical",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model; trim 2,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "trivial3",
+              "prompt": "rename variable 3",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.94,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0055",
+              "estimated_waste": "0.0045",
+              "overshoot": "0.0044",
+              "bloat": "0.0001",
+              "excess_tokens": 1000,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 82,
+              "band": "critical",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model; trim 1,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "trivial2",
+              "prompt": "rename variable 2",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.94,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0050",
+              "estimated_waste": "0.0040",
+              "overshoot": "0.0040",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 80,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model"
+            },
+            {
+              "turn_id": "trivial1",
+              "prompt": "rename variable 1",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.94,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0045",
+              "estimated_waste": "0.0036",
+              "overshoot": "0.0036",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 80,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model"
+            },
+            {
+              "turn_id": "trivial0",
+              "prompt": "rename variable 0",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.94,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0040",
+              "estimated_waste": "0.0032",
+              "overshoot": "0.0032",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 80,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model"
+            },
+            {
+              "turn_id": "research2",
+              "prompt": "compare caching strategies 2",
+              "category": "research",
+              "complexity": "moderate",
+              "confidence": 0.87,
+              "escalated": true,
+              "rationale": "moderate research task",
+              "calls": 2,
+              "actual_cost": "0.03030",
+              "estimated_waste": "0.0015",
+              "overshoot": "0",
+              "bloat": "0.0015",
+              "excess_tokens": 5000,
+              "bloat_measured": true,
+              "tier_used": 2,
+              "tier_required": 2,
+              "normalized": 5,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "trim 5,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "research1",
+              "prompt": "compare caching strategies 1",
+              "category": "research",
+              "complexity": "moderate",
+              "confidence": 0.87,
+              "escalated": true,
+              "rationale": "moderate research task",
+              "calls": 2,
+              "actual_cost": "0.02910",
+              "estimated_waste": "0.0003",
+              "overshoot": "0",
+              "bloat": "0.0003",
+              "excess_tokens": 1000,
+              "bloat_measured": true,
+              "tier_used": 2,
+              "tier_required": 2,
+              "normalized": 1,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "trim 1,000 excess cache_read tokens"
+            },
+            {
+              "turn_id": "complex0",
+              "prompt": "refactor module 0 without changing behaviour",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 3,
+              "actual_cost": "0.1125",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 3,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "complex1",
+              "prompt": "refactor module 1 without changing behaviour",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 3,
+              "actual_cost": "0.1185",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 3,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "complex2",
+              "prompt": "refactor module 2 without changing behaviour",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 3,
+              "actual_cost": "0.1215",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 3,
+              "tier_required": 3,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "writing0",
+              "prompt": "draft release notes 0",
+              "category": "writing",
+              "complexity": "moderate",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "moderate writing task",
+              "calls": 2,
+              "actual_cost": "0.0282",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 2,
+              "tier_required": 2,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "writing1",
+              "prompt": "draft release notes 1",
+              "category": "writing",
+              "complexity": "moderate",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "moderate writing task",
+              "calls": 2,
+              "actual_cost": "0.0300",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 2,
+              "tier_required": 2,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "research0",
+              "prompt": "compare caching strategies 0",
+              "category": "research",
+              "complexity": "moderate",
+              "confidence": 0.87,
+              "escalated": true,
+              "rationale": "moderate research task",
+              "calls": 2,
+              "actual_cost": "0.02730",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 2,
+              "tier_required": 2,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "summary0",
+              "prompt": "summarise this changelog",
+              "category": "summarization",
+              "complexity": "trivial",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "trivial summarization task",
+              "calls": 1,
+              "actual_cost": "0.0012",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 1,
+              "tier_required": 1,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "No waste detected"
+            },
+            {
+              "turn_id": "under0",
+              "prompt": "design the migration plan",
+              "category": "coding",
+              "complexity": "complex",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "complex coding task",
+              "calls": 1,
+              "actual_cost": "0.0075",
+              "estimated_waste": "0",
+              "overshoot": "0",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": true,
+              "tier_used": 1,
+              "tier_required": 3,
+              "normalized": 0,
+              "band": "efficient",
+              "zero_value": false,
+              "under_provisioned": true,
+              "recommendation": "check output quality: model was below the required tier"
+            }
+          ],
+          "flags": {
+            "under_provisioned": 1,
+            "zero_value": 1,
+            "escalated": 3,
+            "escalation_changed_tier": 3
+          }
+        }
+      }
+    },
+    {
+      "name": "corpus too thin for a baseline",
+      "turns": [
+        {
+          "turn_id": "thin0",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "one-off task 0",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 120,
+              "cache_read": 9000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "thin1",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "one-off task 1",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 120,
+              "cache_read": 250000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        },
+        {
+          "turn_id": "thin2",
+          "profile": "agentic",
+          "timestamp": "2026-09-01T00:00:00+00:00",
+          "prompt_text": "one-off task 2",
+          "session_id": "s1",
+          "calls": [
+            {
+              "model": "claude-opus-5",
+              "timestamp": "2026-09-01T00:00:00+00:00",
+              "input_tokens": 0,
+              "output_tokens": 120,
+              "cache_read": 11000,
+              "cache_write_5m": 0,
+              "cache_write_1h": 0
+            }
+          ]
+        }
+      ],
+      "classifications": {
+        "thin0": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.87,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "thin1": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.87,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        },
+        "thin2": {
+          "category": "coding",
+          "complexity": "trivial",
+          "confidence": 0.87,
+          "rationale": "trivial coding task",
+          "model": "claude-haiku-4-5",
+          "escalated": false,
+          "base_complexity": null
+        }
+      },
+      "baseline": {
+        "metric": "cache_read",
+        "min_samples": 5,
+        "by_pair": {},
+        "by_complexity": {},
+        "sample_counts": {
+          "coding|trivial": 3
+        }
+      },
+      "calls_baseline": {},
+      "scores": [
+        {
+          "turn_id": "thin0",
+          "actual_cost": "0.0075",
+          "overshoot_cost": "0.0060",
+          "bloat_cost": "0",
+          "estimated_waste": "0.0060",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": false,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": null,
+          "normalized": 80,
+          "band": "high",
+          "turn_efficiency": null,
+          "recommendation": "use a tier 1 model"
+        },
+        {
+          "turn_id": "thin1",
+          "actual_cost": "0.128",
+          "overshoot_cost": "0.1024",
+          "bloat_cost": "0",
+          "estimated_waste": "0.1024",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": false,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": null,
+          "normalized": 80,
+          "band": "high",
+          "turn_efficiency": null,
+          "recommendation": "use a tier 1 model"
+        },
+        {
+          "turn_id": "thin2",
+          "actual_cost": "0.0085",
+          "overshoot_cost": "0.0068",
+          "bloat_cost": "0",
+          "estimated_waste": "0.0068",
+          "tier_used": 3,
+          "tier_required": 1,
+          "zero_value": false,
+          "under_provisioned": false,
+          "bloat_measured": false,
+          "excess_tokens": 0,
+          "bloat_metric": "cache_read",
+          "call_count": 1,
+          "calls_baseline": null,
+          "normalized": 80,
+          "band": "high",
+          "turn_efficiency": null,
+          "recommendation": "use a tier 1 model"
+        }
+      ],
+      "payload": {
+        "rate_table": {
+          "version": 1,
+          "updated": "2026-07-26",
+          "currency": "USD"
+        },
+        "overview": {
+          "total_cost": "0.1440",
+          "turns": 3,
+          "scorable_turns": 3,
+          "classified_turns": 3,
+          "calls": 3,
+          "mean_calls_per_turn": 1.0,
+          "total_tokens": 270360,
+          "sessions": 1
+        },
+        "cost_by_token_category": [
+          {
+            "category": "cache_read",
+            "label": "cache read",
+            "cost": "0.1350",
+            "tokens": 270000,
+            "share": 0.9375
+          },
+          {
+            "category": "output_tokens",
+            "label": "output",
+            "cost": "0.009",
+            "tokens": 360,
+            "share": 0.0625
+          }
+        ],
+        "cost_by_model": [
+          {
+            "model": "claude-opus-5",
+            "tier": 3,
+            "cost": "0.1440",
+            "calls": 3,
+            "share": 1.0
+          }
+        ],
+        "calls_per_turn": [
+          {
+            "calls": 1,
+            "turns": 3
+          }
+        ],
+        "waste": {
+          "total_waste": "0.1152",
+          "scored_cost": "0.1440",
+          "waste_share": 0.8,
+          "scored_turns": 3,
+          "unmeasured_bloat_turns": 3,
+          "source": "classifier",
+          "components": {
+            "overshoot": "0.1152",
+            "bloat": "0",
+            "zero_value_cost": "0"
+          },
+          "bands": [
+            {
+              "band": "efficient",
+              "turns": 0,
+              "cost": "0"
+            },
+            {
+              "band": "moderate",
+              "turns": 0,
+              "cost": "0"
+            },
+            {
+              "band": "high",
+              "turns": 3,
+              "cost": "0.1440"
+            },
+            {
+              "band": "critical",
+              "turns": 0,
+              "cost": "0"
+            }
+          ],
+          "complexity_by_tier": [
+            {
+              "complexity": "trivial",
+              "required_tier": 1,
+              "tier_used": 3,
+              "turns": 3,
+              "cost": "0.1440",
+              "waste": "0.1152"
+            }
+          ],
+          "category_distribution": [
+            {
+              "category": "coding",
+              "turns": 3,
+              "cost": "0.1440"
+            }
+          ],
+          "leaderboard": [
+            {
+              "turn_id": "thin1",
+              "prompt": "one-off task 1",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.128",
+              "estimated_waste": "0.1024",
+              "overshoot": "0.1024",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": false,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 80,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model"
+            },
+            {
+              "turn_id": "thin2",
+              "prompt": "one-off task 2",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0085",
+              "estimated_waste": "0.0068",
+              "overshoot": "0.0068",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": false,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 80,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model"
+            },
+            {
+              "turn_id": "thin0",
+              "prompt": "one-off task 0",
+              "category": "coding",
+              "complexity": "trivial",
+              "confidence": 0.87,
+              "escalated": false,
+              "rationale": "trivial coding task",
+              "calls": 1,
+              "actual_cost": "0.0075",
+              "estimated_waste": "0.0060",
+              "overshoot": "0.0060",
+              "bloat": "0",
+              "excess_tokens": 0,
+              "bloat_measured": false,
+              "tier_used": 3,
+              "tier_required": 1,
+              "normalized": 80,
+              "band": "high",
+              "zero_value": false,
+              "under_provisioned": false,
+              "recommendation": "use a tier 1 model"
+            }
+          ],
+          "flags": {
+            "under_provisioned": 0,
+            "zero_value": 0,
+            "escalated": 0,
+            "escalation_changed_tier": 0
+          }
+        }
+      }
+    }
+  ]
+}
