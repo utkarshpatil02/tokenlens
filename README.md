@@ -11,19 +11,29 @@ Built as a portfolio project, and validated against real Claude Code usage rathe
 than invented data.
 
 **[Live demo →](https://utkarshpatil02.github.io/tokenlens/)** — real figures from
-one developer's history, with prompt text redacted. It is a frozen snapshot, not
-a live backend: analysis reads local session logs, which exist only on the
-machine that produced them.
+one developer's history, with prompt text redacted. Those are a frozen snapshot
+rather than a live backend, because analysis reads local session logs that exist
+only on the machine that produced them.
+
+The same page reads **your own CSV export**, and reads it in the browser. Nothing
+is uploaded: the file is parsed, priced and aggregated in the tab. That is not
+only a privacy line — a server holding strangers' prompt logs would make this a
+data processor, and classifying on the project's key would put every visitor's
+usage on its credits.
 
 ## What it does
 
-1. **Ingests** usage logs — Claude Code session JSONL today, with a common
-   `Turn`/`Call` model that single-shot exports (Helicone, OpenRouter) drop into.
+1. **Ingests** usage logs — Claude Code session JSONL, plus any CSV carrying a
+   model column, normalised into a common `Turn`/`Call` model. Column detection
+   knows the header spellings Claude Console, OpenAI, Helicone and OpenRouter
+   use, but header names are not a standard, so the mapping is always shown for
+   confirmation rather than applied silently.
 2. **Prices** every call, cache-aware, from a dated rate table.
 3. **Classifies** each prompt by task category and complexity via Claude Haiku,
    escalating ambiguous ones to Sonnet.
 4. **Scores** waste in dollars: model overshoot, context bloat, zero-value usage.
-5. **Presents** it — CLI reports and a React dashboard.
+5. **Presents** it — CLI reports, a React dashboard, and a browser-only path that
+   needs no backend at all.
 
 ## Three findings that changed the design
 
@@ -31,8 +41,8 @@ These came from inspecting real logs before writing the scorer. Each one would
 have produced confidently wrong numbers if the original spec had been built as
 written.
 
-**Uncached input is ~0.0% of spend.** In the reference dataset, cost is 58% cache
-reads, 34% cache writes, 8% output — and **$0.004** of uncached input. The
+**Uncached input is ~0.0% of spend.** In the reference dataset, cost is 59% cache
+reads, 33% cache writes, 7% output — and **$0.004** of uncached input. The
 original bloat formula measured `input_tokens`, so it would have scored zero for
 every record no matter how bloated. Bloat is now measured on `cache_read` for
 agentic data, and cache writes are split by TTL because the 1-hour tier bills at
@@ -78,6 +88,34 @@ Bloat is withheld entirely when a category/complexity cell has fewer than five
 comparable turns. A median over two turns is noise, and reporting it as a finding
 would be worse than reporting nothing.
 
+## Two implementations, one source of truth
+
+Pricing in the browser means the same rules exist twice — Python for the CLI,
+TypeScript for the web app. The failure that matters is not one of them crashing,
+it is the two quietly disagreeing, so the CLI and the demo report different
+dollars for the same log with nothing to say which is right.
+
+Neither is trusted on its own. `pricing.yaml` is the only rate table, and it
+generates the JSON the browser reads. The Python engine then generates fixtures
+of what it actually computes — per-call costs, the aggregated payload, per-turn
+waste scores — and the TypeScript suite has to reproduce every figure. All four
+generators have a `--check` mode so a stale fixture fails rather than drifts.
+
+Three divergences this caught, none of which are bugs in either language:
+
+- **Float money.** JavaScript has no decimal type, and at float precision the
+  per-category costs stop summing to their total. Money is a bigint count of
+  pico-dollars; a rate too precise to divide exactly is rejected rather than
+  rounded.
+- **Rounding.** Python rounds halves to even, JavaScript away from zero, so a
+  share of exactly 5/32 differs in the fourth decimal.
+- **Tie order.** `Counter.most_common` is a stable sort, so models costing the
+  same keep first-seen order.
+
+Comparison is numeric rather than textual: `Decimal` carries an exponent into its
+string form, so Python's `"39.995350"` and the port's `"39.99535"` are the same
+money and holding one to the other's spelling would test the wrong thing.
+
 ## Data
 
 The real case study is the author's own Claude Code history — genuine per-request
@@ -85,19 +123,27 @@ model, token, and timestamp values, priced from published rates. No public
 dataset of real per-call spend exists, because that is billing data and nobody
 publishes it.
 
-Current reference set: **58 turns, 513 requests, 8 sessions, $108.18** — averaging
-8.8 calls per prompt and peaking at 60. That agentic shape is why scoring happens
-per *turn* rather than per call.
+Current reference set: **59 turns, 528 requests, 8 sessions, $119.47** — averaging
+8.95 calls per prompt and peaking at 60. That agentic shape is why scoring happens
+per *turn* rather than per call. These are the figures the published snapshot
+carries; the demo and this file are regenerated from the same export.
 
 Only public, license-compliant data or the user's own exports are used. No
 authentication is bypassed and no private repositories are accessed.
 
 ## Validation
 
-Classifier agreement is reported as **Cohen's kappa** alongside raw percent
-agreement, and kappa is the figure that carries the claim: on a skewed label mix,
-answering the most common class every time scores well on raw agreement while
-learning nothing.
+**Status: the measurement is built and has not been run.** There is no classifier
+accuracy figure yet — the classification cache is empty, so nothing in this
+repository reports how well the classifier agrees with a human. Every waste
+figure currently published comes from hand labels, stamped `hand-labelled` in the
+payload. The methodology below is implemented and tested; what it lacks is a
+result. Saying so is cheaper than being asked.
+
+When it runs, classifier agreement is reported as **Cohen's kappa** alongside raw
+percent agreement, and kappa is the figure that carries the claim: on a skewed
+label mix, answering the most common class every time scores well on raw
+agreement while learning nothing.
 
 - **Complexity uses linearly weighted kappa**, since the axis is ordinal —
   confusing trivial with complex is worse than confusing trivial with moderate.
@@ -130,8 +176,11 @@ uv run uvicorn tokenlens.api:app --port 8000           # API
 **Dashboard** (Node 20.19+ or 22.12+ — see [frontend/README.md](frontend/README.md)):
 
 ```bash
-cd frontend && npm install && npm run dev
+cd frontend && npm install && npm run test && npm run dev
 ```
+
+The dashboard runs without the backend. Dropping a CSV on it exercises the whole
+browser engine — parse, price, aggregate — with no server and no API key.
 
 **Publishing a snapshot.** The deployed site is static, so it serves a frozen
 export. Prompt text is redacted by default and an assertion fails the export if
@@ -162,6 +211,9 @@ against themselves, which would report perfect agreement and prove nothing.
 ## Scope and limits
 
 - **Not a production SaaS.** No auth, no multi-tenancy, no live proxy.
+- **The classifier is unmeasured.** Agreement machinery exists; no kappa has been
+  computed. Until it is, the published waste figures rest on hand labels, and the
+  claim "the classifier works" is not one this project can currently support.
 - **The case study is personal-scale.** One developer's history is real, but it is
   not an organisation's spend, and the org-scale framing rests on that
   distinction being stated rather than glossed.
@@ -183,7 +235,15 @@ backend/tokenlens/
   validation/           Cohen's kappa, confusion matrices, label sets
   analysis.py           the payload the dashboard renders
   api.py                FastAPI
-frontend/src/           React dashboard
+backend/scripts/        fixture generators that keep the two engines in step
+frontend/src/engine/    the same rules in TypeScript, for the browser path
+  money.ts              exact decimal money as pico-dollar bigints
+  csv.ts, csvIngest.ts  CSV reader + column semantics
+  pricing.ts            cost engine, generated rate table
+  score.ts, baseline.ts Waste Score + corpus baselines
+  analysis.ts           the same payload, built client-side
+  __fixtures__/         what Python computes, for the port to reproduce
+frontend/src/components/ React dashboard + the upload and column-mapping flow
 ```
 
 ## Docs

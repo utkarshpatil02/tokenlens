@@ -1,7 +1,7 @@
 """Cache-aware cost engine.
 
 Real agentic usage is dominated by cache traffic, not fresh input: across the
-reference dataset, cache reads were 45% of spend, output 28%, cache writes 27%,
+reference dataset, cache reads were 59% of spend, cache writes 33%, output 7%,
 and uncached input 0.0%. A cost engine that only prices `input_tokens` and
 `output_tokens` is therefore not slightly off, it is wrong by orders of
 magnitude. Every token category is priced separately here, and cache writes are
