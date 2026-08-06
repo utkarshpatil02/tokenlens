@@ -41,8 +41,9 @@ These came from inspecting real logs before writing the scorer. Each one would
 have produced confidently wrong numbers if the original spec had been built as
 written.
 
-**Uncached input is ~0.0% of spend.** In the reference dataset, cost is 59% cache
-reads, 33% cache writes, 7% output — and **$0.004** of uncached input. The
+**Uncached input is ~0.0% of spend.** In the reference dataset, cache traffic is
+94% of cost — 50% reads, 44% writes — against 6.5% output and **$0.015** of
+uncached input across 958 requests. The
 original bloat formula measured `input_tokens`, so it would have scored zero for
 every record no matter how bloated. Bloat is now measured on `cache_read` for
 agentic data, and cache writes are split by TTL because the 1-hour tier bills at
@@ -123,10 +124,26 @@ model, token, and timestamp values, priced from published rates. No public
 dataset of real per-call spend exists, because that is billing data and nobody
 publishes it.
 
-Current reference set: **59 turns, 528 requests, 8 sessions, $119.47** — averaging
-8.95 calls per prompt and peaking at 60. That agentic shape is why scoring happens
-per *turn* rather than per call. These are the figures the published snapshot
-carries; the demo and this file are regenerated from the same export.
+That history now includes the sessions that built TokenLens, so the tool scores
+its own construction. Convenient, and worth stating rather than leaving for a
+reader to notice: it means the corpus is one person doing one kind of work, which
+is the same limitation as the personal-scale caveat below, not a separate one.
+
+Current reference set: **102 turns, 958 requests, 11 sessions, $271.10** —
+averaging 9.4 calls per prompt and peaking at 60. That agentic shape is why
+scoring happens per *turn* rather than per call.
+
+**What it found: $71.61 of waste, 41.6%.** That share is of the $171.99 covered
+by hand labels, not of the full $271.10 — 37 turns carry no label and no waste
+figure, and the dashboard states both numbers rather than quietly implying the
+larger one. Bloat ($36.77) now slightly exceeds model overshoot ($34.78), and the
+most expensive findings are turns where the model choice was *correct* and the
+context carried was not. That is a claim the naive version of this project could
+not have made: "you used Opus where Haiku would do" is what anyone would guess,
+and it turns out to be the smaller half.
+
+These are the figures the published snapshot carries; the demo and this file come
+from the same export.
 
 Only public, license-compliant data or the user's own exports are used. No
 authentication is bypassed and no private repositories are accessed.
@@ -187,8 +204,13 @@ export. Prompt text is redacted by default and an assertion fails the export if
 any survives; the CI workflow re-checks before deploying.
 
 ```bash
-uv run python -m tokenlens.snapshot ../frontend/public/snapshot.json
+uv run python -m tokenlens.snapshot ../frontend/public/snapshot.json \
+  --labels ../labels.csv
 ```
+
+Without `--labels` (or `$TOKENLENS_LABELS`) the export can only publish cached
+classifier output, so a hand-labelled project would ship a dashboard with no
+waste score at all — which is exactly what the published snapshot used to be.
 
 Classification is the only step that costs money and requires `ANTHROPIC_API_KEY`.
 It never runs implicitly: `GET /api/analysis` serves what is already cached, and

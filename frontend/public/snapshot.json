@@ -1,78 +1,92 @@
 {
-  "generated_at": "2026-07-27T17:17:39.932404+00:00",
+  "generated_at": "2026-08-06T19:22:13.655605+00:00",
   "rate_table": {
     "version": 1,
     "updated": "2026-07-26",
     "currency": "USD"
   },
   "overview": {
-    "total_cost": "119.4670569",
-    "turns": 59,
-    "scorable_turns": 57,
-    "classified_turns": 0,
-    "calls": 528,
-    "mean_calls_per_turn": 8.95,
-    "total_tokens": 149407545,
-    "sessions": 8
+    "total_cost": "271.0958158",
+    "turns": 102,
+    "scorable_turns": 100,
+    "classified_turns": 65,
+    "calls": 958,
+    "mean_calls_per_turn": 9.39,
+    "total_tokens": 289716676,
+    "sessions": 11
   },
   "cost_by_token_category": [
     {
       "category": "cache_read",
       "label": "cache read",
-      "cost": "70.6019009",
-      "tokens": 144867214,
-      "share": 0.591
+      "cost": "134.8511068",
+      "tokens": 276836771,
+      "share": 0.4974
     },
     {
       "category": "cache_write_1h",
       "label": "cache write (1h)",
-      "cost": "39.995350",
-      "tokens": 4146598,
-      "share": 0.3348
+      "cost": "118.654218",
+      "tokens": 12090795,
+      "share": 0.4377
+    },
+    {
+      "category": "cache_write_5m",
+      "label": "cache write (5m)",
+      "cost": "0.03208",
+      "tokens": 25664,
+      "share": 0.0001
     },
     {
       "category": "output_tokens",
       "label": "output",
-      "cost": "8.865440",
-      "tokens": 392738,
-      "share": 0.0742
+      "cost": "17.543330",
+      "tokens": 760207,
+      "share": 0.0647
     },
     {
       "category": "input_tokens",
       "label": "input (uncached)",
-      "cost": "0.004366",
-      "tokens": 995,
-      "share": 0.0
+      "cost": "0.015081",
+      "tokens": 3239,
+      "share": 0.0001
     }
   ],
   "cost_by_model": [
     {
       "model": "claude-opus-5",
       "tier": 3,
-      "cost": "116.6297535",
-      "calls": 426,
-      "share": 0.9763
+      "cost": "266.2081310",
+      "calls": 777,
+      "share": 0.982
     },
     {
       "model": "claude-sonnet-5",
       "tier": 2,
-      "cost": "2.8373034",
-      "calls": 102,
-      "share": 0.0237
+      "cost": "4.8553798",
+      "calls": 180,
+      "share": 0.0179
+    },
+    {
+      "model": "claude-haiku-4-5-20251001",
+      "tier": 1,
+      "cost": "0.032305",
+      "calls": 1,
+      "share": 0.0001
     }
   ],
   "calls_per_turn": [
     {
       "calls": 1,
-      "turns": 12
+      "turns": 23
     },
     {
       "calls": 2,
-      "turns": 9
+      "turns": 14
     },
     {
       "calls": 3,
-      "turns": 4
+      "turns": 7
     },
     {
       "calls": 4,
@@ -80,31 +94,31 @@
     },
     {
       "calls": 5,
-      "turns": 4
+      "turns": 6
     },
     {
       "calls": 6,
-      "turns": 1
+      "turns": 4
+    },
+    {
+      "calls": 7,
+      "turns": 4
     },
     {
       "calls": 8,
-      "turns": 2
+      "turns": 3
     },
     {
       "calls": 9,
-      "turns": 2
+      "turns": 3
     },
     {
       "calls": 10,
-      "turns": 2
+      "turns": 3
     },
     {
       "calls": 11,
-      "turns": 2
-    },
-    {
-      "calls": 12,
-      "turns": 1
+      "turns": 4
     },
     {
       "calls": 13,
@@ -116,7 +130,11 @@
     },
     {
       "calls": 15,
-      "turns": 1
+      "turns": 2
+    },
+    {
+      "calls": 16,
+      "turns": 2
     },
     {
       "calls": 17,
@@ -124,7 +142,7 @@
     },
     {
       "calls": 18,
-      "turns": 1
+      "turns": 2
     },
     {
       "calls": 19,
@@ -140,10 +158,34 @@
     },
     {
       "calls": 24,
-      "turns": 2
+      "turns": 3
+    },
+    {
+      "calls": 26,
+      "turns": 1
     },
     {
       "calls": 28,
+      "turns": 1
+    },
+    {
+      "calls": 30,
+      "turns": 1
+    },
+    {
+      "calls": 34,
+      "turns": 1
+    },
+    {
+      "calls": 36,
+      "turns": 1
+    },
+    {
+      "calls": 44,
+      "turns": 1
+    },
+    {
+      "calls": 48,
       "turns": 1
     },
     {
@@ -155,7 +197,581 @@
       "turns": 1
     }
   ],
-  "waste": null,
+  "waste": {
+    "total_waste": "71.6061507",
+    "scored_cost": "171.9925188",
+    "waste_share": 0.4163,
+    "scored_turns": 65,
+    "unmeasured_bloat_turns": 0,
+    "source": "hand-labelled",
+    "components": {
+      "overshoot": "34.7755637",
+      "bloat": "36.7694111",
+      "zero_value_cost": "0.3738503"
+    },
+    "bands": [
+      {
+        "band": "efficient",
+        "turns": 18,
+        "cost": "64.5929506"
+      },
+      {
+        "band": "moderate",
+        "turns": 16,
+        "cost": "29.3751510"
+      },
+      {
+        "band": "high",
+        "turns": 15,
+        "cost": "49.4458174"
+      },
+      {
+        "band": "critical",
+        "turns": 16,
+        "cost": "28.5785998"
+      }
+    ],
+    "complexity_by_tier": [
+      {
+        "complexity": "trivial",
+        "required_tier": 1,
+        "tier_used": 2,
+        "turns": 14,
+        "cost": "1.0753710",
+        "waste": "0.5445544"
+      },
+      {
+        "complexity": "trivial",
+        "required_tier": 1,
+        "tier_used": 3,
+        "turns": 19,
+        "cost": "33.5547070",
+        "waste": "27.9527340"
+      },
+      {
+        "complexity": "moderate",
+        "required_tier": 2,
+        "tier_used": 2,
+        "turns": 7,
+        "cost": "1.3142018",
+        "waste": "0.1643174"
+      },
+      {
+        "complexity": "moderate",
+        "required_tier": 2,
+        "tier_used": 3,
+        "turns": 7,
+        "cost": "12.3235210",
+        "waste": "8.5499414"
+      },
+      {
+        "complexity": "complex",
+        "required_tier": 3,
+        "tier_used": 2,
+        "turns": 5,
+        "cost": "0.4274550",
+        "waste": "0.2243710"
+      },
+      {
+        "complexity": "complex",
+        "required_tier": 3,
+        "tier_used": 3,
+        "turns": 13,
+        "cost": "123.2972630",
+        "waste": "34.1702325"
+      }
+    ],
+    "category_distribution": [
+      {
+        "category": "coding",
+        "turns": 45,
+        "cost": "167.2172263"
+      },
+      {
+        "category": "research",
+        "turns": 16,
+        "cost": "3.5920122"
+      },
+      {
+        "category": "writing",
+        "turns": 2,
+        "cost": "0.8094300"
+      },
+      {
+        "category": "busywork",
+        "turns": 2,
+        "cost": "0.3738503"
+      }
+    ],
+    "leaderboard": [
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:f8b2f728-0f27-4f37-ad40-27abbe2b5840",
+        "prompt": "(redacted \u00b7 31 chars)",
+        "category": "coding",
+        "complexity": "complex",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 60,
+        "actual_cost": "19.2700240",
+        "estimated_waste": "13.603991",
+        "overshoot": "0",
+        "bloat": "13.603991",
+        "excess_tokens": 27207982,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 3,
+        "normalized": 71,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "trim 27,207,982 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:a09382ef-85ac-4c92-9afd-b6fdeffb61c4",
+        "prompt": "(redacted \u00b7 33 chars)",
+        "category": "coding",
+        "complexity": "complex",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 57,
+        "actual_cost": "19.1832240",
+        "estimated_waste": "8.849976",
+        "overshoot": "0",
+        "bloat": "8.849976",
+        "excess_tokens": 17699952,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 3,
+        "normalized": 46,
+        "band": "moderate",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "trim 17,699,952 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:e745085b-8d21-475f-8e23-8820666004f5",
+        "prompt": "(redacted \u00b7 47 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 7,
+        "actual_cost": "9.0880325",
+        "estimated_waste": "7.6546863",
+        "overshoot": "7.2704260",
+        "bloat": "0.3842603",
+        "excess_tokens": 3842603,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 84,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 3,842,603 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:34ebbe7c-c647-4e0a-a10d-9b4115f47e09",
+        "prompt": "(redacted \u00b7 28 chars)",
+        "category": "coding",
+        "complexity": "complex",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 34,
+        "actual_cost": "12.5577310",
+        "estimated_waste": "7.453233",
+        "overshoot": "0",
+        "bloat": "7.453233",
+        "excess_tokens": 14906466,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 3,
+        "normalized": 59,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "trim 14,906,466 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:67ac2dab-69bd-4a78-91cd-efa82beb23bb",
+        "prompt": "(redacted \u00b7 18 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 3,
+        "actual_cost": "7.3093210",
+        "estimated_waste": "5.9403178",
+        "overshoot": "5.8474568",
+        "bloat": "0.092861",
+        "excess_tokens": 928610,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 81,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 928,610 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:77a4c89a-1701-4b45-bed4-a872c3fd7b7e",
+        "prompt": "(redacted \u00b7 20 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 4,
+        "actual_cost": "4.4602650",
+        "estimated_waste": "3.5728618",
+        "overshoot": "3.5682120",
+        "bloat": "0.0046498",
+        "excess_tokens": 46498,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 80,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 46,498 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:e40a1095-3ff3-42af-be44-90a11fbcaec1",
+        "prompt": "(redacted \u00b7 9 chars)",
+        "category": "coding",
+        "complexity": "complex",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 24,
+        "actual_cost": "8.5287180",
+        "estimated_waste": "3.5312",
+        "overshoot": "0",
+        "bloat": "3.5312",
+        "excess_tokens": 7062400,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 3,
+        "normalized": 41,
+        "band": "moderate",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "trim 7,062,400 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:c3f0d4ab-c39b-4287-b7e7-f8c034a32867",
+        "prompt": "(redacted \u00b7 30 chars)",
+        "category": "coding",
+        "complexity": "moderate",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 22,
+        "actual_cost": "3.7066445",
+        "estimated_waste": "2.4725063",
+        "overshoot": "2.2239867",
+        "bloat": "0.2485196",
+        "excess_tokens": 1242598,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 2,
+        "normalized": 67,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 2 model; trim 1,242,598 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:11a5ca57-8351-4c91-9cc7-54b06451b125",
+        "prompt": "(redacted \u00b7 39 chars)",
+        "category": "coding",
+        "complexity": "moderate",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 24,
+        "actual_cost": "2.8203655",
+        "estimated_waste": "2.3115253",
+        "overshoot": "1.6922193",
+        "bloat": "0.619306",
+        "excess_tokens": 3096530,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 2,
+        "normalized": 82,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 2 model; trim 3,096,530 excess cache_read tokens"
+      },
+      {
+        "turn_id": "b59f6986-d242-4c9f-9364-7af95fc40a56:0f84f47c-1092-4c57-be44-a4083c7d3879",
+        "prompt": "(redacted \u00b7 44 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 3,
+        "actual_cost": "2.3832395",
+        "estimated_waste": "1.9100233",
+        "overshoot": "1.9065916",
+        "bloat": "0.0034317",
+        "excess_tokens": 34317,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 80,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 34,317 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:2d15c30c-3b06-4148-b927-026df1525fae",
+        "prompt": "(redacted \u00b7 31 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 6,
+        "actual_cost": "2.0554425",
+        "estimated_waste": "1.6876153",
+        "overshoot": "1.6443540",
+        "bloat": "0.0432613",
+        "excess_tokens": 432613,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 82,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 432,613 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:5e943074-5076-4b43-a5a7-9072580fa01a",
+        "prompt": "(redacted \u00b7 35 chars)",
+        "category": "coding",
+        "complexity": "moderate",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 14,
+        "actual_cost": "1.8022170",
+        "estimated_waste": "1.2440788",
+        "overshoot": "1.0813302",
+        "bloat": "0.1627486",
+        "excess_tokens": 813743,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 2,
+        "normalized": 69,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 2 model; trim 813,743 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:08d3f22d-2a95-417a-9472-e08d45d0dacc",
+        "prompt": "(redacted \u00b7 80 chars)",
+        "category": "coding",
+        "complexity": "moderate",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 28,
+        "actual_cost": "1.8774865",
+        "estimated_waste": "1.2200663",
+        "overshoot": "1.1264919",
+        "bloat": "0.0935744",
+        "excess_tokens": 467872,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 2,
+        "normalized": 65,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 2 model; trim 467,872 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:6022cf3b-b3be-4a11-bdd5-4d031d43c112",
+        "prompt": "(redacted \u00b7 8 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 9,
+        "actual_cost": "1.3649335",
+        "estimated_waste": "1.1319833",
+        "overshoot": "1.0919468",
+        "bloat": "0.0400365",
+        "excess_tokens": 400365,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 83,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 400,365 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:8ebaa606-00b5-49d1-a085-e41f8c8b5d99",
+        "prompt": "(redacted \u00b7 8 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 10,
+        "actual_cost": "1.1909580",
+        "estimated_waste": "1.0883848",
+        "overshoot": "0.9527664",
+        "bloat": "0.1356184",
+        "excess_tokens": 1356184,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 91,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 1,356,184 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:493d0303-ca7b-4e81-8ffe-af824c71de1a",
+        "prompt": "(redacted \u00b7 37 chars)",
+        "category": "coding",
+        "complexity": "moderate",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 24,
+        "actual_cost": "1.1729145",
+        "estimated_waste": "0.7037487",
+        "overshoot": "0.7037487",
+        "bloat": "0",
+        "excess_tokens": 0,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 2,
+        "normalized": 60,
+        "band": "high",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 2 model"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:f0565cce-3f7f-47bf-862b-f82c5d654ce7",
+        "prompt": "(redacted \u00b7 38 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 2,
+        "actual_cost": "0.7499630",
+        "estimated_waste": "0.6896778",
+        "overshoot": "0.5999704",
+        "bloat": "0.0897074",
+        "excess_tokens": 897074,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 92,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 897,074 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:a7c50546-3808-44d4-919a-3aa0d15df194",
+        "prompt": "(redacted \u00b7 31 chars)",
+        "category": "research",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 2,
+        "actual_cost": "0.6560845",
+        "estimated_waste": "0.5621247",
+        "overshoot": "0.5248676",
+        "bloat": "0.0372571",
+        "excess_tokens": 372571,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 86,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 372,571 excess cache_read tokens"
+      },
+      {
+        "turn_id": "51cf75e1-b7d9-4202-a665-d5bb5560a104:fb4c7736-a0eb-4311-8d60-8cee1cde1ef1",
+        "prompt": "(redacted \u00b7 7 chars)",
+        "category": "coding",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 5,
+        "actual_cost": "0.6279175",
+        "estimated_waste": "0.5509363",
+        "overshoot": "0.5023340",
+        "bloat": "0.0486023",
+        "excess_tokens": 486023,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 88,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 486,023 excess cache_read tokens"
+      },
+      {
+        "turn_id": "ef5f1c7d-5853-407f-adad-e6e0b51911fa:d13101b8-46d6-4acb-8ead-2b5682235932",
+        "prompt": "(redacted \u00b7 36 chars)",
+        "category": "research",
+        "complexity": "trivial",
+        "confidence": 1.0,
+        "escalated": false,
+        "rationale": "(rationale redacted)",
+        "calls": 2,
+        "actual_cost": "0.5812480",
+        "estimated_waste": "0.5018042",
+        "overshoot": "0.4649984",
+        "bloat": "0.0368058",
+        "excess_tokens": 368058,
+        "bloat_measured": true,
+        "tier_used": 3,
+        "tier_required": 1,
+        "normalized": 86,
+        "band": "critical",
+        "zero_value": false,
+        "under_provisioned": false,
+        "recommendation": "use a tier 1 model; trim 368,058 excess cache_read tokens"
+      }
+    ],
+    "flags": {
+      "under_provisioned": 5,
+      "zero_value": 2,
+      "escalated": 0,
+      "escalation_changed_tier": 0
+    }
+  },
   "snapshot": {
     "static": true,
     "prompts_redacted": true

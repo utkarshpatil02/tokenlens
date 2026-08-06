@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from tokenlens.analysis import build_analysis
@@ -73,8 +74,11 @@ def build_snapshot(
     projects_path: Path | str,
     cache_path: Path | str | None = None,
     include_prompts: bool = False,
+    labels_path: Path | str | None = None,
 ) -> dict:
-    payload = build_analysis(projects_path, cache_path=cache_path).to_payload()
+    payload = build_analysis(
+        projects_path, cache_path=cache_path, labels_path=labels_path
+    ).to_payload()
     payload["snapshot"] = {
         "static": True,
         "prompts_redacted": not include_prompts,
@@ -100,13 +104,28 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="publish prompt text verbatim (off by default; this is irreversible)",
     )
+    # Without this the export could only ever publish cached classifier output,
+    # so a project labelled by hand had no way to show a waste score at all --
+    # which is exactly what the published snapshot was missing.
+    parser.add_argument(
+        "--labels",
+        default=os.getenv("TOKENLENS_LABELS"),
+        type=Path,
+        help="hand labels standing in for classifier output "
+        "(defaults to $TOKENLENS_LABELS, as the API reads it)",
+    )
     args = parser.parse_args(argv)
 
     if not args.path.exists():
         parser.error(f"no such directory: {args.path}")
+    if args.labels is not None and not Path(args.labels).exists():
+        parser.error(f"no such label file: {args.labels}")
 
     payload = build_snapshot(
-        args.path, cache_path=args.cache, include_prompts=args.include_prompts
+        args.path,
+        cache_path=args.cache,
+        include_prompts=args.include_prompts,
+        labels_path=args.labels,
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2), encoding="utf-8")
