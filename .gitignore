@@ -23,3 +23,8 @@ labels*.csv
 
 # Frontend build output
 frontend/dist/
+
+# Working notes for picking the project back up between sessions. Kept local:
+# the README already carries the project's limitations in a form written for a
+# reader, and this is written for whoever is continuing the work.
+HANDOFF.md
