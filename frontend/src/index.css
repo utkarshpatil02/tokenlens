@@ -668,11 +668,202 @@ select {
   vertical-align: middle;
 }
 
+/* --- hand labelling ----------------------------------------------------- */
+
+kbd {
+  display: inline-block;
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  min-width: 17px;
+  text-align: center;
+  padding: 0 4px;
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.labeler-progress {
+  margin-bottom: 14px;
+}
+
+.labeler-track {
+  display: block;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.labeler-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.18s ease;
+}
+
+.labeler-progress-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.labeler-covered {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.labeler-progress-meta .quiet {
+  color: var(--faint);
+}
+
+.labeler-card-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.labeler-position {
+  font-size: 11.5px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.labeler-cost {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.labeler-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* The prompt is the evidence. It scrolls rather than truncating: a judgement
+   made on a clipped prompt is a judgement about the wrong thing. */
+.labeler-prompt {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: 11px 13px;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 210px;
+  overflow-y: auto;
+}
+
+.labeler-axis {
+  margin-top: 14px;
+}
+
+.labeler-axis-head {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+
+.labeler-axis h4 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.labeler-axis-note {
+  font-size: 11.5px;
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+.labeler-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 8px;
+}
+
+.labeler-choice {
+  display: block;
+  text-align: left;
+  padding: 9px 11px;
+  background: var(--panel);
+}
+
+.labeler-choice.chosen {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.labeler-choice.chosen kbd {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.labeler-choice-name {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.labeler-choice-name kbd {
+  margin-right: 5px;
+}
+
+.labeler-tier {
+  float: right;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--faint);
+}
+
+.labeler-choice-help {
+  display: block;
+  margin-top: 3px;
+  font-weight: 400;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.labeler-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.labeler-hint {
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
 @media (max-width: 560px) {
   .bar-row .name {
     width: 88px;
   }
   .bar-row .meta {
+    display: none;
+  }
+  /* Keyboard hints are for a keyboard. */
+  .labeler-hint {
     display: none;
   }
 }

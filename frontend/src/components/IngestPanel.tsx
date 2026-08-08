@@ -1,16 +1,28 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { buildAnalysis, withPriceableCalls } from '../engine/analysis'
+import { buildAnalysis, scoreTurns, withPriceableCalls } from '../engine/analysis'
 import { parseCsv } from '../engine/csv'
 import type { ParsedCsv } from '../engine/csv'
 import { detectColumns, ingestParsed } from '../engine/csvIngest'
 import type { ColumnMapping, CsvIngestResult } from '../engine/csvIngest'
-import { usd } from '../format'
+import {
+  buildLabelQueue,
+  labelProgress,
+  spendCoveredBy,
+  toClassifications,
+} from '../engine/labeling'
+import type { PartialLabel } from '../engine/labeling'
+import { formatMoney } from '../engine/money'
+import type { Turn } from '../engine/models'
+import { pct, usd } from '../format'
 import type { Analysis } from '../types'
 import { ColumnMapper } from './ColumnMapper'
 import { CallsPerTurn, CostBreakdown } from './CostBreakdown'
 import { FileDrop } from './FileDrop'
+import { LabelingPanel } from './LabelingPanel'
+import { Leaderboard } from './Leaderboard'
 import { Overview } from './Overview'
+import { Heatmap, WasteSummary } from './WastePanel'
 
 /**
  * A file this large would lock the tab up while it parses. The reader holds the
@@ -18,6 +30,15 @@ import { Overview } from './Overview'
  * rather than appear to hang.
  */
 const MAX_BYTES = 50 * 1024 * 1024
+
+/**
+ * The size of pass worth quoting up front.
+ *
+ * Ten turns took 45% of the reference corpus's spend. The figure shown is always
+ * computed from the file in hand, never borrowed — a flat export genuinely does
+ * not have that shape, and promising it would be the wrong kind of confident.
+ */
+const SHORT_PASS = 10
 
 /** Enough rows to show the shape of a real agentic export, in a few lines. */
 const SAMPLE_CSV = [
@@ -40,6 +61,8 @@ type State =
 
 interface Report {
   ingest: CsvIngestResult
+  /** Priceable turns, kept so the file can be re-scored as labels arrive. */
+  turns: Turn[]
   analysis: Analysis
   droppedCalls: number
   droppedModels: string[]
@@ -56,7 +79,7 @@ interface Report {
  */
 const analyze = (ingest: CsvIngestResult): Report => {
   const { turns, droppedCalls, droppedModels } = withPriceableCalls(ingest.turns)
-  return { ingest, analysis: buildAnalysis(turns), droppedCalls, droppedModels }
+  return { ingest, turns, analysis: buildAnalysis(turns), droppedCalls, droppedModels }
 }
 
 /**
@@ -170,8 +193,27 @@ function Result({
   report: Report
   onReset: () => void
 }) {
-  const { ingest, analysis, droppedCalls, droppedModels } = report
+  const { ingest, droppedCalls, droppedModels } = report
   const { stats, issues, unmappedColumns, mapping } = ingest
+
+  // Labels live here rather than in the labelling screen, so closing it keeps
+  // the work and the figures below update as it is done.
+  const [labels, setLabels] = useState<Map<string, PartialLabel>>(() => new Map())
+  const [labelling, setLabelling] = useState(false)
+
+  const queue = useMemo(() => buildLabelQueue(report.turns), [report.turns])
+  const classifications = useMemo(() => toClassifications(labels), [labels])
+
+  // Rescoring re-derives the bloat and calls-per-turn baselines from the labelled
+  // turns, so every figure moves as the labelling proceeds. That is correct
+  // rather than unstable: the reference is your own comparable work, and there
+  // is less of it to compare against after two labels than after twenty.
+  const analysis = useMemo(() => {
+    if (!classifications.size) return report.analysis
+    const { scores } = scoreTurns(report.turns, classifications)
+    return buildAnalysis(report.turns, { classifications, scores })
+  }, [report, classifications])
+
   const uncachedInput = analysis.cost_by_token_category.find(
     (row) => row.category === 'input_tokens',
   )
@@ -303,6 +345,68 @@ function Result({
         </details>
       )}
 
+      <WasteSection
+        analysis={analysis}
+        queue={queue}
+        labels={labels}
+        labelling={labelling}
+        onLabels={setLabels}
+        onStart={() => setLabelling(true)}
+        onStop={() => setLabelling(false)}
+      />
+    </div>
+  )
+}
+
+/**
+ * Waste for an uploaded file: unmeasured, being measured, or measured.
+ *
+ * The unmeasured state is deliberately not zeros. Nothing here claims a file has
+ * no waste until enough of its spend has actually been judged, and the scored
+ * figures below always say how much of the file they cover.
+ */
+function WasteSection({
+  analysis,
+  queue,
+  labels,
+  labelling,
+  onLabels,
+  onStart,
+  onStop,
+}: {
+  analysis: Analysis
+  queue: ReturnType<typeof buildLabelQueue>
+  labels: Map<string, PartialLabel>
+  labelling: boolean
+  onLabels: (labels: Map<string, PartialLabel>) => void
+  onStart: () => void
+  onStop: () => void
+}) {
+  const progress = labelProgress(queue, labels)
+  const { waste, overview } = analysis
+
+  if (labelling) {
+    return (
+      <section>
+        <div className="section-head">
+          <h2>Waste</h2>
+          <span className="section-note">
+            {pct(progress.spendShare)} of labellable spend judged
+          </span>
+        </div>
+        <LabelingPanel
+          queue={queue}
+          labels={labels}
+          onChange={onLabels}
+          onDone={onStop}
+          onCancel={onStop}
+        />
+      </section>
+    )
+  }
+
+  if (!waste) {
+    return (
       <section>
         <div className="section-head">
           <h2>Waste</h2>
@@ -311,13 +415,77 @@ function Result({
           <h3>Not measured yet</h3>
           <p>
             This is what the file cost. Scoring the gap between that and what it should
-            have cost needs each prompt classified by task complexity — the one step that
-            costs money, and the piece still to build.{' '}
-            {analysis.overview.scorable_turns} of {analysis.overview.turns} turns here
-            carry prompt text and would be scorable.
+            have cost needs each prompt judged for task complexity — the only input the
+            numbers above cannot supply. {queue.tasks.length} of {overview.turns} turns
+            here carry prompt text.
+            {/* Only a claim when there is something to concentrate. Below a short
+                pass the "top ten cover most of it" line reduces to "all of them
+                cover all of it", which is true and worth nobody's attention. */}
+            {queue.tasks.length > SHORT_PASS &&
+              ` They are ordered most expensive first, and the top ${SHORT_PASS}` +
+                ` alone carry ${pct(spendCoveredBy(queue, SHORT_PASS))} of their spend.`}
           </p>
+          <button
+            type="button"
+            className="primary"
+            onClick={onStart}
+            disabled={queue.tasks.length === 0}
+          >
+            Label {queue.tasks.length} prompt{queue.tasks.length === 1 ? '' : 's'}
+          </button>
+          {queue.tasks.length === 0 && (
+            <p>
+              No row in this file carried prompt text, so there is nothing to judge. Map
+              a prompt column and analyze again if the export has one.
+            </p>
+          )}
         </div>
       </section>
-    </div>
+    )
+  }
+
+  return (
+    <>
+      <section>
+        <div className="section-head">
+          <h2>Waste</h2>
+          <span className="section-note">
+            {progress.labelled} of {progress.total} prompts labelled ·{' '}
+            {pct(progress.fileShare)} of the file's spend scored
+          </span>
+        </div>
+        <WasteSummary waste={waste} />
+        {progress.labelled < progress.total && (
+          <div className="notice" style={{ marginTop: 10 }}>
+            <h3>Partial by design, and it says so</h3>
+            <p>
+              These figures cover the {progress.labelled} turn
+              {progress.labelled === 1 ? '' : 's'} judged so far —{' '}
+              {usd(formatMoney(progress.labelledCost))} of{' '}
+              {usd(formatMoney(progress.queueCost))} labellable spend. The unlabelled
+              turns are not counted as waste-free; they are not counted at all.
+            </p>
+            <button type="button" onClick={onStart}>
+              Label {progress.total - progress.labelled} more
+            </button>
+          </div>
+        )}
+      </section>
+
+      <section>
+        <div className="section-head">
+          <h2>Complexity vs. tier</h2>
+        </div>
+        <Heatmap waste={waste} />
+      </section>
+
+      <section>
+        <div className="section-head">
+          <h2>Waste leaderboard</h2>
+          <span className="section-note">worst turns by estimated dollar waste</span>
+        </div>
+        <Leaderboard rows={waste.leaderboard} />
+      </section>
+    </>
   )
 }

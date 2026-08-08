@@ -32,7 +32,9 @@ export function WasteSummary({ waste }: { waste: Waste }) {
         <div className="panel stat">
           <div className="value">{usd(components.zero_value_cost)}</div>
           <div className="label">zero-value spend</div>
-          <div className="sub">{waste.flags.zero_value} busywork turns</div>
+          <div className="sub">
+            {waste.flags.zero_value} busywork turn{waste.flags.zero_value === 1 ? '' : 's'}
+          </div>
         </div>
       </div>
 
