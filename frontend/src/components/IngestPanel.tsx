@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 
 import { buildAnalysis, scoreTurns, withPriceableCalls } from '../engine/analysis'
+import type { Classification } from '../engine/classification'
 import { parseCsv } from '../engine/csv'
 import type { ParsedCsv } from '../engine/csv'
 import { detectColumns, ingestParsed } from '../engine/csvIngest'
@@ -16,6 +17,7 @@ import { formatMoney } from '../engine/money'
 import type { Turn } from '../engine/models'
 import { pct, usd } from '../format'
 import type { Analysis } from '../types'
+import { ClassifyPanel } from './ClassifyPanel'
 import { ColumnMapper } from './ColumnMapper'
 import { CallsPerTurn, CostBreakdown } from './CostBreakdown'
 import { FileDrop } from './FileDrop'
@@ -39,6 +41,9 @@ const MAX_BYTES = 50 * 1024 * 1024
  * not have that shape, and promising it would be the wrong kind of confident.
  */
 const SHORT_PASS = 10
+
+/** Which way the person is judging prompts, if they are. */
+type Mode = 'none' | 'labelling' | 'classifying'
 
 /** Enough rows to show the shape of a real agentic export, in a few lines. */
 const SAMPLE_CSV = [
@@ -196,13 +201,36 @@ function Result({
   const { ingest, droppedCalls, droppedModels } = report
   const { stats, issues, unmappedColumns, mapping } = ingest
 
-  // Labels live here rather than in the labelling screen, so closing it keeps
-  // the work and the figures below update as it is done.
+  // Judgements live here rather than in the screens that produce them, so
+  // closing one keeps the work and the figures below update as it arrives.
   const [labels, setLabels] = useState<Map<string, PartialLabel>>(() => new Map())
-  const [labelling, setLabelling] = useState(false)
+  const [classified, setClassified] = useState<Map<string, Classification>>(
+    () => new Map(),
+  )
+  const [mode, setMode] = useState<Mode>('none')
 
   const queue = useMemo(() => buildLabelQueue(report.turns), [report.turns])
-  const classifications = useMemo(() => toClassifications(labels), [labels])
+
+  /**
+   * Hand labels and classifier output, kept apart until here.
+   *
+   * They are deliberately not merged into one editable map: each
+   * `Classification` carries the model that produced it, and flattening a human
+   * judgement and a prediction into the same shape is exactly what stops
+   * `classificationSource()` from being able to say `mixed`.
+   *
+   * Hand labels win on a collision. For the turns a person actually judged, a
+   * human answer is the better input — and it is the reference the classifier
+   * is meant to be measured against, not the other way round.
+   */
+  const classifications = useMemo(() => {
+    const merged = new Map(classified)
+    for (const [turnId, found] of toClassifications(labels)) merged.set(turnId, found)
+    return merged
+  }, [classified, labels])
+
+  const addClassified = (found: Map<string, Classification>) =>
+    setClassified((current) => new Map([...current, ...found]))
 
   // Rescoring re-derives the bloat and calls-per-turn baselines from the labelled
   // turns, so every figure moves as the labelling proceeds. That is correct
@@ -349,10 +377,11 @@ function Result({
         analysis={analysis}
         queue={queue}
         labels={labels}
-        labelling={labelling}
+        classifications={classifications}
+        mode={mode}
         onLabels={setLabels}
-        onStart={() => setLabelling(true)}
-        onStop={() => setLabelling(false)}
+        onClassified={addClassified}
+        onMode={setMode}
       />
     </div>
   )
@@ -369,37 +398,62 @@ function WasteSection({
   analysis,
   queue,
   labels,
-  labelling,
+  classifications,
+  mode,
   onLabels,
-  onStart,
-  onStop,
+  onClassified,
+  onMode,
 }: {
   analysis: Analysis
   queue: ReturnType<typeof buildLabelQueue>
   labels: Map<string, PartialLabel>
-  labelling: boolean
+  classifications: Map<string, Classification>
+  mode: Mode
   onLabels: (labels: Map<string, PartialLabel>) => void
-  onStart: () => void
-  onStop: () => void
+  onClassified: (found: Map<string, Classification>) => void
+  onMode: (mode: Mode) => void
 }) {
   const progress = labelProgress(queue, labels)
   const { waste, overview } = analysis
+  const close = () => onMode('none')
 
-  if (labelling) {
+  // Judged by any means, not just by hand — what the classifier covered counts
+  // toward the same total and must not be re-bought.
+  const judged = queue.tasks.filter((task) =>
+    classifications.has(task.turn.turn_id),
+  ).length
+
+  if (mode === 'labelling') {
     return (
       <section>
         <div className="section-head">
           <h2>Waste</h2>
           <span className="section-note">
-            {pct(progress.spendShare)} of labellable spend judged
+            {pct(progress.spendShare)} of labellable spend judged by hand
           </span>
         </div>
         <LabelingPanel
           queue={queue}
           labels={labels}
           onChange={onLabels}
-          onDone={onStop}
-          onCancel={onStop}
+          onDone={close}
+          onCancel={close}
+        />
+      </section>
+    )
+  }
+
+  if (mode === 'classifying') {
+    return (
+      <section>
+        <div className="section-head">
+          <h2>Waste</h2>
+        </div>
+        <ClassifyPanel
+          queue={queue}
+          existing={classifications}
+          onClassified={onClassified}
+          onClose={close}
         />
       </section>
     )
@@ -425,14 +479,28 @@ function WasteSection({
               ` They are ordered most expensive first, and the top ${SHORT_PASS}` +
                 ` alone carry ${pct(spendCoveredBy(queue, SHORT_PASS))} of their spend.`}
           </p>
-          <button
-            type="button"
-            className="primary"
-            onClick={onStart}
-            disabled={queue.tasks.length === 0}
-          >
-            Label {queue.tasks.length} prompt{queue.tasks.length === 1 ? '' : 's'}
-          </button>
+          <div className="drop-actions" style={{ justifyContent: 'flex-start' }}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => onMode('labelling')}
+              disabled={queue.tasks.length === 0}
+            >
+              Label {queue.tasks.length} prompt{queue.tasks.length === 1 ? '' : 's'}{' '}
+              yourself
+            </button>
+            <button
+              type="button"
+              onClick={() => onMode('classifying')}
+              disabled={queue.tasks.length === 0}
+            >
+              Classify with Claude
+            </button>
+          </div>
+          <p className="section-note">
+            Labelling costs nothing and needs no key. Claude needs an Anthropic key and
+            costs cents; it quotes the price before spending anything.
+          </p>
           {queue.tasks.length === 0 && (
             <p>
               No row in this file carried prompt text, so there is nothing to judge. Map
@@ -450,24 +518,28 @@ function WasteSection({
         <div className="section-head">
           <h2>Waste</h2>
           <span className="section-note">
-            {progress.labelled} of {progress.total} prompts labelled ·{' '}
+            {judged} of {progress.total} prompts judged ·{' '}
             {pct(progress.fileShare)} of the file's spend scored
           </span>
         </div>
         <WasteSummary waste={waste} />
-        {progress.labelled < progress.total && (
+        {judged < progress.total && (
           <div className="notice" style={{ marginTop: 10 }}>
             <h3>Partial by design, and it says so</h3>
             <p>
-              These figures cover the {progress.labelled} turn
-              {progress.labelled === 1 ? '' : 's'} judged so far —{' '}
-              {usd(formatMoney(progress.labelledCost))} of{' '}
-              {usd(formatMoney(progress.queueCost))} labellable spend. The unlabelled
-              turns are not counted as waste-free; they are not counted at all.
+              These figures cover the {judged} turn{judged === 1 ? '' : 's'} judged so
+              far — {usd(waste.scored_cost)} of{' '}
+              {usd(formatMoney(progress.queueCost))} labellable spend. The rest are not
+              counted as waste-free; they are not counted at all.
             </p>
-            <button type="button" onClick={onStart}>
-              Label {progress.total - progress.labelled} more
-            </button>
+            <div className="drop-actions" style={{ justifyContent: 'flex-start' }}>
+              <button type="button" onClick={() => onMode('labelling')}>
+                Label {progress.total - judged} more
+              </button>
+              <button type="button" onClick={() => onMode('classifying')}>
+                Classify the rest with Claude
+              </button>
+            </div>
           </div>
         )}
       </section>
