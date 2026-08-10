@@ -27,9 +27,13 @@ jobs:
     name: Python
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v5
+      # setup-uv v9 stopped pruning the cache by default, to spare PyPI the
+      # re-downloads. The trade is a larger Actions cache; left at the new
+      # default deliberately, because this project's dependency set is small
+      # enough that the storage is irrelevant and the bandwidth is not ours.
+      - uses: astral-sh/setup-uv@v9
         with:
           enable-cache: true
           cache-dependency-glob: backend/pyproject.toml
@@ -48,9 +52,9 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # The Vite toolchain requires 20.19+ or 22.12+; on anything older npm
           # silently skips rolldown's native binding and the build fails with an
@@ -89,9 +93,13 @@ jobs:
     # otherwise the CLI and the published dashboard quietly drift apart with
     # nothing to indicate which figure is right.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v5
+      # setup-uv v9 stopped pruning the cache by default, to spare PyPI the
+      # re-downloads. The trade is a larger Actions cache; left at the new
+      # default deliberately, because this project's dependency set is small
+      # enough that the storage is irrelevant and the bandwidth is not ours.
+      - uses: astral-sh/setup-uv@v9
         with:
           enable-cache: true
           cache-dependency-glob: backend/pyproject.toml
@@ -124,7 +132,7 @@ jobs:
     # moves that from "caught at deploy" to "caught on the pull request", which
     # matters because publishing is the one step that cannot be undone.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Committed snapshot carries no prompt text
         run: |
