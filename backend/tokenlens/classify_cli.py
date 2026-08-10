@@ -2,8 +2,15 @@
 
     python -m tokenlens.classify_cli --dry-run     # cost estimate, no API calls
     python -m tokenlens.classify_cli               # classify (uses cache)
+    python -m tokenlens.classify_cli --labels labels.csv --dry-run
 
 Requires ANTHROPIC_API_KEY unless every prompt is already cached.
+
+`--labels` restricts the run to the prompts a label sheet covers, which is what
+validation actually needs: the kappa is computed over the turns that have a hand
+label, and classifying the rest of the corpus to get it is money spent on
+prompts the comparison will ignore. `--limit` cannot stand in for this — it
+takes the first N in corpus order, and labelled turns are scattered through it.
 """
 
 from __future__ import annotations
@@ -15,6 +22,7 @@ from pathlib import Path
 from tokenlens.classify import Classifier, ClassificationCache, PROMPT_VERSION, cache_key
 from tokenlens.ingest import parse_projects
 from tokenlens.report import DEFAULT_PROJECTS, _snippet
+from tokenlens.validation import LabelError, LabelSet
 
 DEFAULT_CACHE = Path.home() / ".tokenlens" / "classifications.db"
 
@@ -32,12 +40,38 @@ def main(argv: list[str] | None = None) -> int:
         help="report how many prompts would be sent, without calling the API",
     )
     parser.add_argument("--limit", type=int, help="classify at most this many prompts")
+    parser.add_argument(
+        "--labels",
+        type=Path,
+        help="only classify prompts covered by this label sheet (for validation)",
+    )
     args = parser.parse_args(argv)
 
     if not args.path.exists():
         parser.error(f"no such directory: {args.path}")
 
     turns = [t for t in parse_projects(args.path) if t.is_scorable]
+
+    if args.labels:
+        try:
+            wanted = LabelSet.load(args.labels).turn_ids
+        except (LabelError, OSError) as error:
+            parser.error(str(error))
+
+        turns = [t for t in turns if t.turn_id in wanted]
+
+        # A label whose turn is no longer in the logs cannot be compared against
+        # anything, and silently classifying 40 of 65 would produce a kappa over
+        # a quietly different reference set than the one being claimed.
+        missing = len(wanted) - len(turns)
+        if missing:
+            print(
+                f"warning: {missing} of {len(wanted)} labelled turn(s) are not in "
+                f"{args.path} and will be left out of the comparison"
+            )
+        if not turns:
+            parser.error(f"no labelled prompt in {args.labels.name} appears in {args.path}")
+
     if args.limit:
         turns = turns[: args.limit]
 
