@@ -16,10 +16,12 @@ rather than a live backend, because analysis reads local session logs that exist
 only on the machine that produced them.
 
 The same page reads **your own CSV export**, and reads it in the browser. Nothing
-is uploaded: the file is parsed, priced and aggregated in the tab. That is not
-only a privacy line — a server holding strangers' prompt logs would make this a
-data processor, and classifying on the project's key would put every visitor's
-usage on its credits.
+is uploaded: the file is parsed, priced, classified and scored in the tab. That is
+not only a privacy line — a server holding strangers' prompt logs would make this
+a data processor, and classifying on the project's key would put every visitor's
+usage on its credits. Which is also why, if you want prompts classified by a
+model, you bring your own key: it goes to the provider and nowhere else, and it
+is held in `sessionStorage`, so it dies with the tab.
 
 ## What it does
 
@@ -29,8 +31,10 @@ usage on its credits.
    use, but header names are not a standard, so the mapping is always shown for
    confirmation rather than applied silently.
 2. **Prices** every call, cache-aware, from a dated rate table.
-3. **Classifies** each prompt by task category and complexity via Claude Haiku,
-   escalating ambiguous ones to Sonnet.
+3. **Classifies** each prompt by task category and complexity — by hand, by
+   Claude, or by Gemini. All three produce the same judgement and cost different
+   amounts of money and attention; see [Three ways to get a
+   score](#three-ways-to-get-a-score).
 4. **Scores** waste in dollars: model overshoot, context bloat, zero-value usage.
 5. **Presents** it — CLI reports, a React dashboard, and a browser-only path that
    needs no backend at all.
@@ -88,6 +92,46 @@ Two invariants from the earlier formula are named regression tests:
 Bloat is withheld entirely when a category/complexity cell has fewer than five
 comparable turns. A median over two turns is noise, and reporting it as a finding
 would be worse than reporting nothing.
+
+## Three ways to get a score
+
+Pricing needs nothing from you. Scoring waste needs one judgement per prompt —
+how hard was this task, really — and that is the only input the numbers cannot
+supply themselves. There are three ways to provide it, all in the browser, all
+producing the same `Classification`:
+
+| Mode | Key | Cost | Good for |
+|---|---|---|---|
+| **Label it yourself** | none | free | Any export, no account anywhere. A pass over the expensive turns takes a couple of minutes. |
+| **Claude** | Anthropic | cents — ~$0.09 for 65 prompts | The default. Haiku 4.5 reads every prompt, Sonnet 5 gets a second opinion where Haiku is unsure. |
+| **Gemini** | Google | none on the free tier | No spend. Free-tier limits are low and unpublished, so a long run is slow rather than expensive; rate-limited requests are retried with backoff. A key on a paid tier bills per token, and the page will not guess which yours is — so it quotes no figure at all. |
+
+**Prompts are always judged most expensive first.** Waste is denominated in
+dollars and spend is heavily concentrated — in the author's corpus the priciest
+fifth of turns carries close to two-thirds of the spend — so the order is what
+makes stopping early a real choice rather than an abandoned job. Progress is
+shown in **dollars covered**, not prompts done, and the screen states the share
+of spend a run would cover *for your file*, measured rather than assumed: a flat
+export genuinely does not have that shape, and the concentration drifts as a
+corpus grows.
+
+Stopping early is safe in both directions: turns left unjudged are **not counted
+as waste-free, they are not counted at all**, and every figure says how much of
+the file it covers.
+
+**Every score records who produced the labels under it** — hand, or which models,
+with per-model turn counts. A score labelled by Gemini and one labelled by Haiku
+are different measurements, and a single Claude run already involves two models.
+The dashboard names them rather than saying "classifier", because a figure whose
+origin cannot be traced is the one thing this project tries never to publish.
+
+Modes mix freely. Hand labels win where both exist — for the turns a person
+actually judged, a human answer is the better input, and it is the reference the
+classifier is meant to be measured against rather than the other way round.
+
+One caveat this section should not be read around: **how closely the model modes
+agree with a human is still unmeasured.** Offering them is not a claim that they
+are accurate — see [Validation](#validation).
 
 ## Two implementations, one source of truth
 
@@ -153,9 +197,9 @@ authentication is bypassed and no private repositories are accessed.
 **Status: the measurement is built and has not been run.** There is no classifier
 accuracy figure yet — the classification cache is empty, so nothing in this
 repository reports how well the classifier agrees with a human. Every waste
-figure currently published comes from hand labels, stamped `hand-labelled` in the
-payload. The methodology below is implemented and tested; what it lacks is a
-result. Saying so is cheaper than being asked.
+figure currently published comes from hand labels, and the payload says so in
+`waste.source`. The methodology below is implemented and tested; what it lacks is
+a result. Saying so is cheaper than being asked.
 
 When it runs, classifier agreement is reported as **Cohen's kappa** alongside raw
 percent agreement, and kappa is the figure that carries the claim: on a skewed
@@ -173,8 +217,13 @@ agreement while learning nothing.
 ```bash
 uv run python -m tokenlens.validate_cli export labels.csv --limit 100
 #  ... label by hand, before looking at classifier output ...
+uv run python -m tokenlens.classify_cli --labels labels.csv     # the billable step
 uv run python -m tokenlens.validate_cli report labels.csv --second reviewer.csv
 ```
+
+The export comes first for a reason that is easy to lose: labelling against
+visible classifier output anchors the reference set to the thing it is supposed
+to evaluate.
 
 ## Running it
 
@@ -197,7 +246,9 @@ cd frontend && npm install && npm run test && npm run dev
 ```
 
 The dashboard runs without the backend. Dropping a CSV on it exercises the whole
-browser engine — parse, price, aggregate — with no server and no API key.
+browser engine — parse, price, classify, score — with no server. Hand-labelling
+needs no API key at all; the Claude and Gemini modes use a key you supply, which
+is sent to that provider and held only in `sessionStorage`.
 
 **Publishing a snapshot.** The deployed site is static, so it serves a frozen
 export. Prompt text is redacted by default and an assertion fails the export if
@@ -212,13 +263,25 @@ Without `--labels` (or `$TOKENLENS_LABELS`) the export can only publish cached
 classifier output, so a hand-labelled project would ship a dashboard with no
 waste score at all — which is exactly what the published snapshot used to be.
 
-Classification is the only step that costs money and requires `ANTHROPIC_API_KEY`.
-It never runs implicitly: `GET /api/analysis` serves what is already cached, and
-issuing new requests takes an explicit `POST /api/classify`. Results cache by
-content hash, so re-runs are free.
+Classification is the only step that can cost money, and in this CLI it requires
+`ANTHROPIC_API_KEY`. It never runs implicitly: `GET /api/analysis` serves what is
+already cached, and issuing new requests takes an explicit `POST /api/classify`.
+Results cache by content hash, so re-runs are free.
+
+```bash
+uv run python -m tokenlens.classify_cli --labels ../labels.csv --dry-run  # free
+uv run python -m tokenlens.classify_cli --labels ../labels.csv            # billable
+```
+
+`--labels` restricts a run to the prompts a label sheet covers, which is what
+validation needs — the kappa is computed over labelled turns, and classifying the
+rest of the corpus to get it is money spent on prompts the comparison ignores.
+`--limit` is not a substitute: it takes the first N turns in corpus order, and
+labelled turns are scattered through it.
 
 **Running it without an API key.** Hand labels stand in for classifier output, so
-scoring, the heatmap, and the leaderboard all work for nothing:
+scoring, the heatmap, and the leaderboard all work for nothing — in the browser
+via the labelling screen, or here:
 
 ```bash
 uv run python -m tokenlens.validate_cli export labels.csv   # then label by hand
@@ -227,7 +290,7 @@ TOKENLENS_LABELS=labels.csv uv run uvicorn tokenlens.api:app --port 8000
 
 This is not a degraded mode — for the turns covered, a human judgement is a
 better input than a prediction. What it cannot do is measure the classifier, so
-results are stamped `hand-labelled` and validation refuses to score labels
+results are stamped as hand-labelled and validation refuses to score labels
 against themselves, which would report perfect agreement and prove nothing.
 
 ## Scope and limits
@@ -264,8 +327,11 @@ frontend/src/engine/    the same rules in TypeScript, for the browser path
   pricing.ts            cost engine, generated rate table
   score.ts, baseline.ts Waste Score + corpus baselines
   analysis.ts           the same payload, built client-side
+  labeling.ts           cost-ordered queue + progress in dollars
+  classifier.ts         the provider-neutral run loop and shared prompt
+  claude.ts, gemini.ts  one adapter per classification mode
   __fixtures__/         what Python computes, for the port to reproduce
-frontend/src/components/ React dashboard + the upload and column-mapping flow
+frontend/src/components/ React dashboard, upload and mapping, labelling, classify
 ```
 
 ## Docs
