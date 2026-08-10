@@ -11,11 +11,10 @@
  * Using the cheapest model that does the job and paying for a stronger one only
  * where it changes the answer is the project's own thesis applied to itself.
  *
- * `SYSTEM_PROMPT`, `USER_TEMPLATE` and `PROMPT_VERSION` are byte-identical to
- * the Python and `claude.drift.test.ts` fails if they drift. That is not
- * tidiness: these labels exist to be compared against the hand labels, and two
- * judges answering subtly different questions would make the agreement figure
- * meaningless.
+ * The question itself lives in `classifier.ts`, shared with every other
+ * provider and pinned to the Python by `claude.drift.test.ts`. Only the things
+ * that are genuinely Claude's — its two models, its escalation threshold, its
+ * request shape — are here.
  *
  * The key lives in this module's closure and nowhere else. `classifyQueue`
  * never receives it, so the shared code that formats progress and failure
@@ -30,51 +29,23 @@ import {
   CHARS_PER_TOKEN,
   ClassificationError,
   MAX_PROMPT_CHARS,
+  RESPONSE_FIELDS,
+  SYSTEM_PROMPT,
   estimatedPromptTokens,
+  renderUserMessage,
   validateClassification,
 } from './classifier'
-import type { ClassifierBackend, CostEstimate } from './classifier'
+import type { ClassifierBackend, CostEstimate, RawAnswer } from './classifier'
 import { sum } from './money'
 import { makeCall } from './models'
 import { defaultTable } from './pricing'
 import type { PriceTable } from './pricing'
-
-/**
- * Bump when the instructions change. Part of the Python cache key, kept here so
- * a browser-produced label can be traced to the wording that produced it.
- */
-export const PROMPT_VERSION = '2026-07-26.1'
 
 export const BASE_MODEL = 'claude-haiku-4-5'
 export const ESCALATION_MODEL = 'claude-sonnet-5'
 
 /** Below this confidence on the complexity call, get a second opinion. */
 export const DEFAULT_THRESHOLD = 0.7
-
-export const SYSTEM_PROMPT = `You classify prompts that were sent to AI models, so their cost can be analysed.
-
-Return two independent judgements plus your confidence.
-
-CATEGORY — what the task is. Used for reporting only. It must NOT influence your complexity judgement.
-  coding         writing, debugging, reviewing, or explaining code
-  research       finding, gathering, comparing, or investigating information
-  writing        composing prose, documentation, messages, or creative text
-  summarization  condensing or extracting from text the user supplied
-  busywork       trivial lookups or chores where using an AI model at all is not justified (checking the weather, simple arithmetic, a definition)
-
-COMPLEXITY — how hard the task is. This is the judgement that matters.
-  trivial   single step, no reasoning, no context integration
-  moderate  multiple steps, or requires synthesising context the user provided
-  complex   extended reasoning, long context, or high stakes for being wrong
-
-Judge complexity by the work required, not by the topic or how the prompt is phrased. A short question can be complex and a long one trivial. Do not assume coding is hard or that writing is easy.
-
-CONFIDENCE — how certain you are about COMPLEXITY specifically, from 0 to 1. Be honest: report low confidence when the prompt is ambiguous, underspecified, or could reasonably be read at two different levels. Low confidence is useful information, not a failure.
-
-RATIONALE — one sentence justifying the complexity call.`
-
-export const renderUserMessage = (prompt: string): string =>
-  `Classify this prompt:\n\n<prompt>\n${prompt}\n</prompt>`
 
 /**
  * The shape the model is constrained to return.
@@ -100,7 +71,7 @@ const RESPONSE_SCHEMA = {
       description: 'One sentence explaining the complexity call.',
     },
   },
-  required: ['category', 'complexity', 'confidence', 'rationale'],
+  required: RESPONSE_FIELDS,
   additionalProperties: false,
 } as const
 
@@ -196,13 +167,6 @@ const readReply = (message: Anthropic.Message, model: string): unknown => {
   }
 }
 
-interface Reply {
-  category: string
-  complexity: string
-  confidence: number
-  rationale: string
-}
-
 /**
  * The Claude adapter.
  *
@@ -234,7 +198,7 @@ export const createClaudeBackend = (
 
   const ask = async (model: string, prompt: string, signal: AbortSignal) => {
     const message = await send(requestFor(model, prompt), { signal })
-    return readReply(message, model) as Reply
+    return readReply(message, model) as RawAnswer
   }
 
   return {

@@ -18,15 +18,13 @@ import { fileURLToPath } from 'node:url'
 
 import { describe, expect, it } from 'vitest'
 
+import { BASE_MODEL, DEFAULT_THRESHOLD, ESCALATION_MODEL } from './claude'
 import {
-  BASE_MODEL,
-  DEFAULT_THRESHOLD,
-  ESCALATION_MODEL,
+  MAX_PROMPT_CHARS,
   PROMPT_VERSION,
   SYSTEM_PROMPT,
   renderUserMessage,
-} from './claude'
-import { MAX_PROMPT_CHARS } from './classifier'
+} from './classifier'
 
 const PYTHON = fileURLToPath(
   new URL('../../../backend/tokenlens/classify/classifier.py', import.meta.url),

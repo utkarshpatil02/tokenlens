@@ -47,6 +47,58 @@ export const MAX_PROMPT_CHARS = 6_000
 const TRUNCATION_MARKER = '\n[... truncated for classification ...]'
 
 /**
+ * The question every provider is asked, ported verbatim from `classifier.py`.
+ *
+ * This lives here rather than in an adapter because it is the one thing that
+ * must not vary between them. These labels are compared against the hand labels
+ * and against each other, and two judges answering subtly differently worded
+ * questions produce an agreement figure that means nothing.
+ * `claude.drift.test.ts` fails if it drifts from the Python.
+ */
+export const PROMPT_VERSION = '2026-07-26.1'
+
+export const SYSTEM_PROMPT = `You classify prompts that were sent to AI models, so their cost can be analysed.
+
+Return two independent judgements plus your confidence.
+
+CATEGORY — what the task is. Used for reporting only. It must NOT influence your complexity judgement.
+  coding         writing, debugging, reviewing, or explaining code
+  research       finding, gathering, comparing, or investigating information
+  writing        composing prose, documentation, messages, or creative text
+  summarization  condensing or extracting from text the user supplied
+  busywork       trivial lookups or chores where using an AI model at all is not justified (checking the weather, simple arithmetic, a definition)
+
+COMPLEXITY — how hard the task is. This is the judgement that matters.
+  trivial   single step, no reasoning, no context integration
+  moderate  multiple steps, or requires synthesising context the user provided
+  complex   extended reasoning, long context, or high stakes for being wrong
+
+Judge complexity by the work required, not by the topic or how the prompt is phrased. A short question can be complex and a long one trivial. Do not assume coding is hard or that writing is easy.
+
+CONFIDENCE — how certain you are about COMPLEXITY specifically, from 0 to 1. Be honest: report low confidence when the prompt is ambiguous, underspecified, or could reasonably be read at two different levels. Low confidence is useful information, not a failure.
+
+RATIONALE — one sentence justifying the complexity call.`
+
+export const renderUserMessage = (prompt: string): string =>
+  `Classify this prompt:\n\n<prompt>\n${prompt}\n</prompt>`
+
+/** The four fields every provider is constrained to return. */
+export const RESPONSE_FIELDS = [
+  'category',
+  'complexity',
+  'confidence',
+  'rationale',
+] as const
+
+/** A provider's raw answer, before validation. */
+export interface RawAnswer {
+  category: string
+  complexity: string
+  confidence: number
+  rationale: string
+}
+
+/**
  * Enough failures in a row to conclude the run is broken rather than unlucky.
  *
  * A rejected key fails every prompt identically. Discovering that by making a

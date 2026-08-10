@@ -11,15 +11,9 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type Anthropic from '@anthropic-ai/sdk'
 
-import {
-  BASE_MODEL,
-  ESCALATION_MODEL,
-  SYSTEM_PROMPT,
-  createClaudeBackend,
-  renderUserMessage,
-} from './claude'
+import { BASE_MODEL, ESCALATION_MODEL, createClaudeBackend } from './claude'
 import type { Send } from './claude'
-import { ClassificationError } from './classifier'
+import { ClassificationError, SYSTEM_PROMPT, renderUserMessage } from './classifier'
 import { formatMoney } from './money'
 
 const answer = (overrides: Record<string, unknown> = {}) =>

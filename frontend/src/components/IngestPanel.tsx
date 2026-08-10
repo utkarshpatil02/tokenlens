@@ -494,12 +494,13 @@ function WasteSection({
               onClick={() => onMode('classifying')}
               disabled={queue.tasks.length === 0}
             >
-              Classify with Claude
+              Classify with a model
             </button>
           </div>
           <p className="section-note">
-            Labelling costs nothing and needs no key. Claude needs an Anthropic key and
-            costs cents; it quotes the price before spending anything.
+            Labelling costs nothing and needs no key. Claude and Gemini need a key from
+            that provider; the screen quotes what a run will cost before spending
+            anything.
           </p>
           {queue.tasks.length === 0 && (
             <p>
@@ -537,7 +538,7 @@ function WasteSection({
                 Label {progress.total - judged} more
               </button>
               <button type="button" onClick={() => onMode('classifying')}>
-                Classify the rest with Claude
+                Classify the rest with a model
               </button>
             </div>
           </div>

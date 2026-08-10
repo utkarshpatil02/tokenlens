@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
 
-import { createClaudeBackend } from '../engine/claude'
 import type { Classification } from '../engine/classification'
 import { classifyQueue, renderPrompt } from '../engine/classifier'
 import type { ClassifyProgress, ClassifyRun } from '../engine/classifier'
@@ -8,6 +7,7 @@ import { spendCoveredBy } from '../engine/labeling'
 import type { LabelQueue } from '../engine/labeling'
 import { formatMoney } from '../engine/money'
 import { pct, usd } from '../format'
+import { PROVIDERS, keyStorageKey, providerById } from './providers'
 
 interface Props {
   queue: LabelQueue
@@ -24,11 +24,9 @@ interface Props {
  * with the tab. A key in localStorage outlives the visit, and this page has no
  * business holding someone's credential after they have closed it.
  */
-const KEY_STORAGE = 'tokenlens.anthropic-key'
-
-const readKey = (): string => {
+const readKey = (providerId: string): string => {
   try {
-    return sessionStorage.getItem(KEY_STORAGE) ?? ''
+    return sessionStorage.getItem(keyStorageKey(providerId)) ?? ''
   } catch {
     // Private-browsing modes can throw on access. A missing key is recoverable;
     // a blank screen is not.
@@ -36,10 +34,10 @@ const readKey = (): string => {
   }
 }
 
-const writeKey = (key: string) => {
+const writeKey = (providerId: string, key: string) => {
   try {
-    if (key) sessionStorage.setItem(KEY_STORAGE, key)
-    else sessionStorage.removeItem(KEY_STORAGE)
+    if (key) sessionStorage.setItem(keyStorageKey(providerId), key)
+    else sessionStorage.removeItem(keyStorageKey(providerId))
   } catch {
     /* Nothing to do — the run still works, it just will not be remembered. */
   }
@@ -55,19 +53,33 @@ type State =
   | { kind: 'failed'; message: string }
 
 /**
- * Classification by Claude, from the browser.
+ * Classification by a model, from the browser.
  *
- * The order here is deliberate: how much, then how much it costs, then the key,
- * then the button. Nothing is spent before the estimate has been on screen, and
- * the run can be stopped at any point without losing what it has already
- * bought.
+ * The order here is deliberate: which provider, how many, what it costs, then
+ * the key, then the button. Nothing is spent before the estimate has been on
+ * screen, and the run can be stopped at any point without losing what it has
+ * already bought.
+ *
+ * Nothing below is provider-specific — everything that differs comes out of the
+ * `PROVIDERS` registry, which is what keeps adding a third provider to a
+ * registry entry plus an adapter.
  */
 export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props) {
-  const [key, setKey] = useState(readKey)
-  const [remember, setRemember] = useState(() => Boolean(readKey()))
+  const [providerId, setProviderId] = useState(PROVIDERS[0].id)
+  const provider = providerById(providerId)
+  const [key, setKey] = useState(() => readKey(providerId))
+  const [remember, setRemember] = useState(() => Boolean(readKey(providerId)))
   const [limit, setLimit] = useState<number | null>(null)
   const [state, setState] = useState<State>({ kind: 'idle' })
   const abort = useRef<AbortController | null>(null)
+
+  // Each provider keeps its own key, so switching never sends one service's
+  // credential to another.
+  const chooseProvider = (id: string) => {
+    setProviderId(id)
+    setKey(readKey(id))
+    setRemember(Boolean(readKey(id)))
+  }
 
   const pending = useMemo(
     () => queue.tasks.filter((task) => !existing.has(task.turn.turn_id)),
@@ -81,10 +93,10 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
   // Priced without a key: the estimate is the thing that justifies typing one.
   const estimate = useMemo(
     () =>
-      createClaudeBackend('').estimate(
+      provider.create('').estimate(
         slice.map((task) => renderPrompt(task.turn.prompt_text ?? '')),
       ),
-    [slice],
+    [slice, provider],
   )
 
   const run = async () => {
@@ -103,7 +115,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
     })
 
     try {
-      const result = await classifyQueue(createClaudeBackend(key), queue, {
+      const result = await classifyQueue(provider.create(key), queue, {
         existing,
         limit: limit ?? undefined,
         signal: controller.signal,
@@ -124,7 +136,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
   }
 
   const start = () => {
-    writeKey(remember ? key : '')
+    writeKey(provider.id, remember ? key : '')
     void run()
   }
 
@@ -132,10 +144,9 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
     <div className="labeler">
       <div className="mapper-head">
         <div>
-          <h3>Classify with Claude</h3>
+          <h3>Classify with a model</h3>
           <p className="section-note">
-            Haiku 4.5 reads each prompt, escalating to Sonnet 5 only where it is unsure.
-            Your key goes to Anthropic and nowhere else.
+            {provider.blurb} Your key goes to {provider.name} and nowhere else.
           </p>
         </div>
         <div className="mapper-actions">
@@ -148,6 +159,30 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
       {state.kind === 'idle' && (
         <>
           <div className="panel">
+            <div className="labeler-axis">
+              <div className="labeler-axis-head">
+                <h4>Provider</h4>
+                <span className="labeler-axis-note">
+                  both answer the same question, so their labels are comparable
+                </span>
+              </div>
+              <div className="labeler-choices">
+                {PROVIDERS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className={`labeler-choice${
+                      option.id === providerId ? ' chosen' : ''
+                    }`}
+                    onClick={() => chooseProvider(option.id)}
+                  >
+                    <span className="labeler-choice-name">{option.name}</span>
+                    <span className="labeler-choice-help">{option.blurb}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="labeler-axis">
               <div className="labeler-axis-head">
                 <h4>How many</h4>
@@ -183,7 +218,9 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
               </div>
               <div className="labeler-card-head">
                 <span className="labeler-cost">
-                  {estimate.cost === null ? 'unknown' : usd(formatMoney(estimate.cost))}
+                  {estimate.cost === null
+                    ? 'not quoted'
+                    : usd(formatMoney(estimate.cost))}
                 </span>
                 <span className="labeler-meta">
                   {slice.length} prompt{slice.length === 1 ? '' : 's'}
@@ -198,7 +235,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
           </div>
 
           <div className="panel" style={{ marginTop: 10 }}>
-            <h3>Anthropic API key</h3>
+            <h3>{provider.name} API key</h3>
             <label className="mapper-field" style={{ maxWidth: 520 }}>
               <span className="mapper-label">
                 secret key<span className="req"> required</span>
@@ -208,10 +245,17 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
                 value={key}
                 autoComplete="off"
                 spellCheck={false}
-                placeholder="sk-ant-…"
+                placeholder={provider.keyPlaceholder}
                 onChange={(event) => setKey(event.target.value.trim())}
               />
             </label>
+            <p className="section-note" style={{ maxWidth: '70ch' }}>
+              {provider.keyHelp} Get one at{' '}
+              <a href={provider.keyUrl} target="_blank" rel="noreferrer">
+                {provider.keyUrlLabel}
+              </a>
+              .
+            </p>
             <label className="mapper-check">
               <input
                 type="checkbox"
@@ -223,8 +267,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
                 <span className="mapper-hint">
                   Stored in <code>sessionStorage</code>, which is cleared when the tab
                   closes — never in <code>localStorage</code>, and never sent anywhere
-                  but Anthropic. There is no free API tier; a Claude.ai subscription is
-                  not an API key.
+                  but {provider.name}.
                 </span>
               </span>
             </label>
