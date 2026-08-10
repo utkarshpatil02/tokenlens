@@ -86,14 +86,48 @@ export interface LeaderboardRow {
   recommendation: string
 }
 
+/** One model that produced labels, and how many turns it accounts for. */
+export interface SourceModel {
+  model: string
+  turns: number
+}
+
+/**
+ * Where the labels behind the waste figures came from.
+ *
+ * This started as a single word, which stopped being enough the moment a second
+ * provider existed: a score labelled by Gemini and one labelled by Haiku are
+ * different measurements, and rendering both as "classifier" presents them as
+ * the same thing. Escalation makes it worse — one Claude run produces labels
+ * from two models, and how many escalated is exactly what a reader wants to
+ * know.
+ *
+ * `kind` stays the discriminator because the question it answers is still the
+ * first one that matters: if any of these labels were made by a person, the
+ * figures say nothing about classifier accuracy.
+ */
+export interface WasteSource {
+  kind: 'classifier' | 'hand-labelled' | 'mixed'
+  /** Models that produced labels, most-used first. Empty when hand-labelled. */
+  models: SourceModel[]
+  /**
+   * Turns judged by a person. Absent on snapshots frozen before this field
+   * existed — the dashboard shows what it knows rather than inventing a count.
+   */
+  human_turns?: number
+}
+
+/** What older frozen snapshots carry in `waste.source`. */
+export type LegacySource = 'classifier' | 'hand-labelled' | 'mixed'
+
 export interface Waste {
   total_waste: string
   scored_cost: string
   waste_share: number
   scored_turns: number
   unmeasured_bloat_turns: number
-  /** Whether these figures came from the classifier or from hand labels. */
-  source: 'classifier' | 'hand-labelled' | 'mixed'
+  /** Which labels produced these figures, and from which models. */
+  source: WasteSource
   components: {
     overshoot: string
     bloat: string

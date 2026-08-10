@@ -179,7 +179,7 @@ describe.each(golden.cases.map((c) => [c.name, c] as const))(
         expect(waste.waste_share).toBe(expected.waste_share)
         expect(waste.scored_turns).toBe(expected.scored_turns)
         expect(waste.unmeasured_bloat_turns).toBe(expected.unmeasured_bloat_turns)
-        expect(waste.source).toBe(expected.source)
+        expect(waste.source).toEqual(expected.source)
       })
 
       it('agrees on the components', () => {

@@ -247,18 +247,41 @@ const buildWaste = (
   }
 }
 
-/** Where the labels behind the waste figures came from. */
+/**
+ * Where the labels behind the waste figures came from, and from which models.
+ *
+ * Only the turns that were actually *scored* count. A classification for a turn
+ * that never made it into the scores describes nothing on screen, and letting
+ * it name a model in the provenance line would attribute figures to a model
+ * that did not produce them.
+ *
+ * Models are ordered most-used first, with a stable tie-break on first
+ * appearance — the same discipline as every other ordering here, so the line
+ * does not reshuffle between runs of the same corpus.
+ */
 const classificationSource = (
   classifications: Map<string, Classification>,
   scores: WasteScore[],
 ): Waste['source'] => {
   const scoredIds = new Set(scores.map((score) => score.turnId))
+  const counts = new Map<string, number>()
   let human = 0
+
   for (const [turnId, found] of classifications) {
-    if (scoredIds.has(turnId) && isHuman(found)) human += 1
+    if (!scoredIds.has(turnId)) continue
+    if (isHuman(found)) {
+      human += 1
+      continue
+    }
+    counts.set(found.model, (counts.get(found.model) ?? 0) + 1)
   }
-  if (!human) return 'classifier'
-  return human === scoredIds.size ? 'hand-labelled' : 'mixed'
+
+  const models = [...counts]
+    .sort(([, a], [, b]) => b - a)
+    .map(([model, turns]) => ({ model, turns }))
+
+  const kind = !human ? 'classifier' : human === scoredIds.size ? 'hand-labelled' : 'mixed'
+  return { kind, models, human_turns: human }
 }
 
 const bands = (scores: WasteScore[]): BandRow[] => {

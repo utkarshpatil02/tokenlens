@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from tokenlens.analysis import build_analysis
-from tokenlens.classify.schema import Category, Complexity
+from tokenlens.classify.schema import Category, Classification, Complexity
 from tokenlens.ingest import parse_projects
 from tokenlens.validation import LabelSet, SelfComparisonError, build_report
 
@@ -144,7 +144,64 @@ class TestAnalysisIntegration:
     def test_source_is_reported_as_hand_labelled(self, tmp_path, real_turn_ids):
         path = label_file(tmp_path / "l.csv", real_turn_ids)
         payload = build_analysis(FIXTURES, labels_path=path).to_payload()
-        assert payload["waste"]["source"] == "hand-labelled"
+        source = payload["waste"]["source"]
+
+        assert source["kind"] == "hand-labelled"
+        assert source["human_turns"] == len(real_turn_ids)
+        # No model produced these, so none may be named as though one had.
+        assert source["models"] == []
+
+    def test_source_names_the_models_that_produced_the_labels(
+        self, tmp_path, real_turn_ids
+    ):
+        """A figure whose origin cannot be traced is the thing to avoid."""
+        analysis = build_analysis(FIXTURES, labels_path=label_file(
+            tmp_path / "l.csv", real_turn_ids
+        ))
+        # Re-label as though a classifier had done it, with one escalation, so
+        # the payload has to attribute two models rather than one.
+        models = ["claude-haiku-4-5"] * len(real_turn_ids)
+        models[0] = "claude-sonnet-5"
+        analysis.classifications = {
+            turn_id: Classification(
+                Category.CODING, Complexity.TRIVIAL, 0.9, "r", model
+            )
+            for turn_id, model in zip(real_turn_ids, models)
+        }
+        source = analysis.to_payload()["waste"]["source"]
+
+        assert source["kind"] == "classifier"
+        assert source["human_turns"] == 0
+        # Most-used first, so the workhorse leads and the escalation follows.
+        assert source["models"] == [
+            {"model": "claude-haiku-4-5", "turns": len(real_turn_ids) - 1},
+            {"model": "claude-sonnet-5", "turns": 1},
+        ]
+
+    def test_source_is_mixed_when_a_person_judged_only_some(
+        self, tmp_path, real_turn_ids
+    ):
+        analysis = build_analysis(FIXTURES, labels_path=label_file(
+            tmp_path / "l.csv", real_turn_ids
+        ))
+        human = analysis.classifications[real_turn_ids[0]]
+        analysis.classifications = {
+            real_turn_ids[0]: human,
+            **{
+                turn_id: Classification(
+                    Category.CODING, Complexity.TRIVIAL, 0.9, "r", "gemini-3.5-flash-lite"
+                )
+                for turn_id in real_turn_ids[1:]
+            },
+        }
+        source = analysis.to_payload()["waste"]["source"]
+
+        assert source["kind"] == "mixed"
+        assert source["human_turns"] == 1
+        # The human turn is not attributed to the model that did the others.
+        assert source["models"] == [
+            {"model": "gemini-3.5-flash-lite", "turns": len(real_turn_ids) - 1}
+        ]
 
     def test_source_is_classifier_when_no_labels_are_used(self, tmp_path):
         payload = build_analysis(FIXTURES, cache_path=tmp_path / "c.db").to_payload()

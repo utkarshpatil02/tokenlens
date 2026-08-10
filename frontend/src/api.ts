@@ -1,4 +1,4 @@
-import type { Analysis, Health } from './types'
+import type { Analysis, Health, LegacySource, WasteSource } from './types'
 
 /**
  * Backend calls.
@@ -28,16 +28,41 @@ const parse = async <T>(response: Response): Promise<T> => {
   return response.json() as Promise<T>
 }
 
+/**
+ * Accept the single-word `source` older snapshots carry.
+ *
+ * A snapshot is a *frozen* artifact: the one on the demo today was written
+ * before `source` grew model attribution, and it is still a true record of what
+ * it measured. Widening the field must not stop the dashboard reading it. The
+ * legacy form simply knows less — no model names, no human count — and the
+ * panel shows what it has rather than inventing the rest.
+ *
+ * This lives at the boundary on purpose. Everything inside the app sees one
+ * shape; only the code that reads foreign payloads knows the old one exists.
+ */
+export const normalizeSource = (
+  source: WasteSource | LegacySource | undefined,
+): WasteSource => {
+  if (typeof source === 'string') return { kind: source, models: [] }
+  if (!source) return { kind: 'classifier', models: [] }
+  return { ...source, models: source.models ?? [] }
+}
+
+const normalize = (analysis: Analysis): Analysis =>
+  analysis.waste
+    ? { ...analysis, waste: { ...analysis.waste, source: normalizeSource(analysis.waste.source) } }
+    : analysis
+
 /** `import.meta.env.BASE_URL` keeps this correct under a project subpath. */
 const snapshotUrl = `${import.meta.env.BASE_URL}snapshot.json`
 
 export const fetchAnalysis = async (): Promise<Analysis> => {
   try {
-    return await fetch('/api/analysis').then(parse<Analysis>)
+    return normalize(await fetch('/api/analysis').then(parse<Analysis>))
   } catch {
     // No live backend — fall back to the bundled snapshot. If that is missing
     // too, the error propagates and the UI reports it.
-    return fetch(snapshotUrl).then(parse<Analysis>)
+    return normalize(await fetch(snapshotUrl).then(parse<Analysis>))
   }
 }
 

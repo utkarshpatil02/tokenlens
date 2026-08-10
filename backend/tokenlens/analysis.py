@@ -186,17 +186,51 @@ class Analysis:
             },
         }
 
-    def _classification_source(self) -> str:
-        """Where the labels behind the waste figures came from."""
+    def _classification_source(self) -> dict:
+        """Where the labels behind the waste figures came from, and from which models.
+
+        This was a single word until a second provider existed. It stopped being
+        enough at that point: a score labelled by Gemini and one labelled by
+        Haiku are different measurements, and one word presents them as the
+        same. Escalation makes it sharper still — a single Claude run produces
+        labels from two models, and how many escalated is exactly what a reader
+        wants to know.
+
+        Only *scored* turns count. A classification for a turn that never
+        reached the scores describes nothing in the payload, and letting it name
+        a model would attribute figures to a model that did not produce them.
+
+        Models are ordered most-used first; ties keep first-seen order, so the
+        same corpus always renders the same line.
+        """
         scored_ids = {s.turn_id for s in self.scores}
-        human = sum(
-            1
-            for turn_id, found in self.classifications.items()
-            if turn_id in scored_ids and found.is_human
-        )
+        counts: Counter[str] = Counter()
+        human = 0
+
+        for turn_id, found in self.classifications.items():
+            if turn_id not in scored_ids:
+                continue
+            if found.is_human:
+                human += 1
+                continue
+            counts[found.model] += 1
+
         if not human:
-            return "classifier"
-        return "hand-labelled" if human == len(scored_ids) else "mixed"
+            kind = "classifier"
+        elif human == len(scored_ids):
+            kind = "hand-labelled"
+        else:
+            kind = "mixed"
+
+        return {
+            "kind": kind,
+            # `most_common` is a stable sort, so equal counts keep insertion
+            # order rather than shuffling between runs.
+            "models": [
+                {"model": model, "turns": turns} for model, turns in counts.most_common()
+            ],
+            "human_turns": human,
+        }
 
     def _bands(self) -> list[dict]:
         counts: Counter[str] = Counter()

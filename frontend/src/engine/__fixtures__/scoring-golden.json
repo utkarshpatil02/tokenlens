@@ -1229,7 +1229,16 @@
           "waste_share": 0.4152,
           "scored_turns": 20,
           "unmeasured_bloat_turns": 0,
-          "source": "mixed",
+          "source": {
+            "kind": "mixed",
+            "models": [
+              {
+                "model": "claude-haiku-4-5",
+                "turns": 16
+              }
+            ],
+            "human_turns": 4
+          },
           "components": {
             "overshoot": "0.0288",
             "bloat": "0.6121",
@@ -2009,7 +2018,16 @@
           "waste_share": 0.8,
           "scored_turns": 3,
           "unmeasured_bloat_turns": 3,
-          "source": "classifier",
+          "source": {
+            "kind": "classifier",
+            "models": [
+              {
+                "model": "claude-haiku-4-5",
+                "turns": 3
+              }
+            ],
+            "human_turns": 0
+          },
           "components": {
             "overshoot": "0.1152",
             "bloat": "0",
