@@ -18,8 +18,19 @@ dist/
 
 # Label sheets contain verbatim prompt text. This repository is public, so
 # committing one would publish everything the prompts say.
+#
+# The near miss is a backup: `labels*.csv` alone does not cover
+# `labels.csv.bak`, so an editing pass that leaves one behind puts every prompt
+# one `git add -A` away from being published. The trailing-suffix forms below
+# close that.
+#
+# Kept anchored to .csv on purpose. A blanket `labels*` would also match
+# `tokenlens/validation/labels.py`, and silently ignoring a source file is a
+# worse trap than the one being fixed.
 labels*.csv
+labels*.csv.*
 *labels.csv
+*labels.csv.*
 
 # Frontend build output
 frontend/dist/
