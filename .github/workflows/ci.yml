@@ -29,11 +29,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # setup-uv v9 stopped pruning the cache by default, to spare PyPI the
+      # Pinned to an exact version, unlike every other action here: setup-uv
+      # publishes floating major tags only up to v7, so `@v9` does not resolve
+      # and the job fails before it runs a thing. Not an inconsistency to tidy
+      # away — bumping this one means moving to a new exact tag, and there are
+      # no automatic patch updates behind it.
+      #
+      # v9 also stopped pruning the cache by default, to spare PyPI the
       # re-downloads. The trade is a larger Actions cache; left at the new
       # default deliberately, because this project's dependency set is small
       # enough that the storage is irrelevant and the bandwidth is not ours.
-      - uses: astral-sh/setup-uv@v9
+      - uses: astral-sh/setup-uv@v9.0.0
         with:
           enable-cache: true
           cache-dependency-glob: backend/pyproject.toml
@@ -95,11 +101,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # setup-uv v9 stopped pruning the cache by default, to spare PyPI the
+      # Pinned to an exact version, unlike every other action here: setup-uv
+      # publishes floating major tags only up to v7, so `@v9` does not resolve
+      # and the job fails before it runs a thing. Not an inconsistency to tidy
+      # away — bumping this one means moving to a new exact tag, and there are
+      # no automatic patch updates behind it.
+      #
+      # v9 also stopped pruning the cache by default, to spare PyPI the
       # re-downloads. The trade is a larger Actions cache; left at the new
       # default deliberately, because this project's dependency set is small
       # enough that the storage is irrelevant and the bandwidth is not ours.
-      - uses: astral-sh/setup-uv@v9
+      - uses: astral-sh/setup-uv@v9.0.0
         with:
           enable-cache: true
           cache-dependency-glob: backend/pyproject.toml
