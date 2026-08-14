@@ -677,6 +677,54 @@ input[type='text']:focus {
   vertical-align: middle;
 }
 
+/* --- conversion prompt -------------------------------------------------- */
+
+.export-prompt {
+  margin: 18px auto 0;
+  max-width: 62ch;
+  text-align: left;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.export-prompt > summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--accent);
+  text-align: center;
+  list-style-position: inside;
+}
+
+.export-prompt .section-note {
+  display: block;
+  margin: 10px 0 0;
+  line-height: 1.5;
+}
+
+.prompt-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 8px;
+}
+
+/* Selectable by design: clipboard access can be refused, and this is then the
+   only way the text gets out. */
+.prompt-text {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--muted);
+  resize: vertical;
+}
+
 /* --- provenance --------------------------------------------------------- */
 
 .provenance-panel p:last-child {

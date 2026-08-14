@@ -103,8 +103,17 @@ export function LabelingPanel({ queue, labels, onChange, onDone, onCancel }: Pro
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey) return
       // Never swallow a keystroke meant for something the person is typing in.
-      const target = event.target as HTMLElement | null
-      if (target?.closest('input, textarea, select, [contenteditable]')) return
+      // `closest` is checked rather than assumed: a keydown dispatched at
+      // `window` or `document` — which extensions, a11y tooling and test
+      // harnesses all do — has a target that is not an Element, and calling it
+      // blind throws and takes the whole key handler down with it.
+      const target = event.target
+      if (
+        target instanceof Element &&
+        target.closest('input, textarea, select, [contenteditable]')
+      ) {
+        return
+      }
 
       if (event.key === 'ArrowRight') {
         go(index + 1)

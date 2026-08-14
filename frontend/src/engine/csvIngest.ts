@@ -86,6 +86,28 @@ export interface CsvIngestResult {
 export const ISSUE_LIMIT = 100
 
 /** Field order and labels for a mapping UI. Order is the order of detection. */
+/**
+ * The header this project asks for when it gets to choose.
+ *
+ * Every name here is one `detectColumns` recognises, so a file with this header
+ * maps itself and the user confirms rather than assembles. `csvIngest.test.ts`
+ * asserts exactly that — the guarantee is worth pinning, because the conversion
+ * prompt on the upload screen tells people to ask for these names, and a rename
+ * here would otherwise send them to the column mapper with no clue why.
+ */
+export const CANONICAL_HEADER = [
+  'model',
+  'timestamp',
+  'input_tokens',
+  'output_tokens',
+  'cache_read',
+  'cache_write_5m',
+  'cache_write_1h',
+  'turn_id',
+  'session_id',
+  'prompt',
+] as const
+
 export const MAPPABLE_FIELDS: {
   field: MappableField
   label: string

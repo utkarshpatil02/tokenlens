@@ -10,7 +10,13 @@
 
 import { describe, expect, it } from 'vitest'
 
-import { detectColumns, ingestCsv, parseTimestamp } from './csvIngest'
+import {
+  CANONICAL_HEADER,
+  MAPPABLE_FIELDS,
+  detectColumns,
+  ingestCsv,
+  parseTimestamp,
+} from './csvIngest'
 import { formatMoney, parseMoney, sum } from './money'
 import { defaultTable } from './pricing'
 
@@ -360,5 +366,31 @@ describe('end to end', () => {
     expect(result.turns[0].calls[0].cache_write_5m).toBe(12_359)
     expect(result.unknownModels).toEqual([])
     expect(result.issues).toEqual([])
+  })
+})
+
+describe('CANONICAL_HEADER', () => {
+  it('is fully auto-detected, so a generated file needs no manual mapping', () => {
+    // The conversion prompt on the upload screen tells people to ask for these
+    // exact names. If a rename here stopped resolving, they would land in the
+    // column mapper with nothing on screen explaining why.
+    const mapping = detectColumns([...CANONICAL_HEADER])
+    const unmapped = CANONICAL_HEADER.filter(
+      (_name, index) => !MAPPABLE_FIELDS.some((field) => mapping[field.field] === index),
+    )
+
+    expect(unmapped).toEqual([])
+  })
+
+  it('carries the one column without which nothing can be priced', () => {
+    expect(CANONICAL_HEADER).toContain('model')
+    expect(detectColumns([...CANONICAL_HEADER]).model).not.toBeNull()
+  })
+
+  it('keeps input tokens and cache reads apart', () => {
+    // Folding them together is the double-count that inflates agentic spend.
+    // Asking for both separately is what lets the reader keep them distinct.
+    expect(CANONICAL_HEADER).toContain('input_tokens')
+    expect(CANONICAL_HEADER).toContain('cache_read')
   })
 })

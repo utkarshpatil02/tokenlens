@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
 
+import { ExportPrompt } from './ExportPrompt'
+
 interface Props {
   onFile: (file: File) => void
   onSample: () => void
@@ -78,6 +80,8 @@ export function FileDrop({ onFile, onSample, busy }: Props) {
       <p className="drop-privacy">
         Read in your browser. There is no server here to send it to.
       </p>
+
+      <ExportPrompt />
     </div>
   )
 }
