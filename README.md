@@ -29,7 +29,9 @@ is held in `sessionStorage`, so it dies with the tab.
    model column, normalised into a common `Turn`/`Call` model. Column detection
    knows the header spellings Claude Console, OpenAI, Helicone and OpenRouter
    use, but header names are not a standard, so the mapping is always shown for
-   confirmation rather than applied silently.
+   confirmation rather than applied silently. For an export in some other shape
+   there is a [conversion prompt](#no-export-in-the-right-shape) to hand an
+   assistant along with the file.
 2. **Prices** every call, cache-aware, from a dated rate table.
 3. **Classifies** each prompt by task category and complexity — by hand, by
    Claude, or by Gemini. All three produce the same judgement and cost different
@@ -92,6 +94,34 @@ Two invariants from the earlier formula are named regression tests:
 Bloat is withheld entirely when a category/complexity cell has fewer than five
 comparable turns. A median over two turns is noise, and reporting it as a finding
 would be worse than reporting nothing.
+
+## No export in the right shape?
+
+Column detection handles the exports it knows, and the mapper handles the rest —
+but both need a CSV to exist first. Plenty of people have *something* instead: a
+console download, a Helicone or OpenRouter dump, a JSON blob.
+
+The upload screen carries a prompt for that. Copy it, paste it into ChatGPT,
+Claude or Gemini **together with the file you already have**, and it reshapes
+what you give it into the header this page reads:
+
+```
+model,timestamp,input_tokens,output_tokens,cache_read,cache_write_5m,cache_write_1h,turn_id,session_id,prompt
+```
+
+Every one of those names is one the detector recognises, so a converted file maps
+itself and you confirm rather than assemble. A test asserts that, because the
+prompt and the parser drifting apart would send people to the column mapper with
+nothing on screen explaining why.
+
+**It converts your data; it cannot conjure it.** No assistant can see your
+billing account, so asking one to "generate my token usage" returns invented rows
+that look entirely plausible — and this tool would then price them and report a
+waste score on spend that never happened. The prompt spends several of its lines
+forbidding exactly that: leave the cell empty, say what you could not determine,
+never fill a gap with a reasonable-looking number. An empty column is a column
+the mapper can ask about; a fabricated one is a wrong dollar figure with nothing
+to question.
 
 ## Three ways to get a score
 
@@ -248,7 +278,9 @@ cd frontend && npm install && npm run test && npm run dev
 The dashboard runs without the backend. Dropping a CSV on it exercises the whole
 browser engine — parse, price, classify, score — with no server. Hand-labelling
 needs no API key at all; the Claude and Gemini modes use a key you supply, which
-is sent to that provider and held only in `sessionStorage`.
+is sent to that provider and held only in `sessionStorage`. If your export is not
+already a CSV this can read, the drop screen has a [conversion
+prompt](#no-export-in-the-right-shape) to hand an assistant along with it.
 
 **Publishing a snapshot.** The deployed site is static, so it serves a frozen
 export. Prompt text is redacted by default and an assertion fails the export if

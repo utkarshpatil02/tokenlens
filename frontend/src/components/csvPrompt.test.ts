@@ -6,6 +6,9 @@
  * score on. These pin the properties that keep it a converter.
  */
 
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+
 import { describe, expect, it } from 'vitest'
 
 import { CANONICAL_HEADER, detectColumns, MAPPABLE_FIELDS } from '../engine/csvIngest'
@@ -51,5 +54,19 @@ describe('the CSV conversion prompt', () => {
 
   it('ends by handing over to the export, so paste order is unambiguous', () => {
     expect(CSV_PROMPT.trimEnd().endsWith('Here is my export:')).toBe(true)
+  })
+})
+
+describe('the README quotes this header', () => {
+  // The README repeats the header for a reader who never opens the app. It was
+  // copied by hand, so it can rot silently — and a header printed in the
+  // project's own documentation that the project's own parser does not detect
+  // is the most confusing possible way to fail.
+  const README = fileURLToPath(new URL('../../../README.md', import.meta.url))
+
+  it('reproduces CANONICAL_HEADER exactly', () => {
+    const readme = readFileSync(README, 'utf8')
+
+    expect(readme).toContain(CANONICAL_HEADER.join(','))
   })
 })
