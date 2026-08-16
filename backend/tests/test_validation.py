@@ -67,6 +67,14 @@ def write_labels(path: Path, rows: list[tuple[str, str, str]]) -> Path:
     return path
 
 
+def write_labels_ctx(path: Path, rows: list[tuple[str, str, str, str]]) -> Path:
+    """A sheet carrying the optional context_dependent column."""
+    lines = ["turn_id,prompt,category,complexity,context_dependent,notes"]
+    lines += [f"{tid},prompt {tid},{cat},{cx},{flag}," for tid, cat, cx, flag in rows]
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
 class TestKappaAgainstHandComputedValues:
     def test_perfect_agreement_is_one(self):
         result = agreement(["a", "b", "a", "b"], ["a", "b", "a", "b"])
@@ -422,6 +430,154 @@ class TestReportFormatting:
         import json
 
         json.dumps(self._report(tmp_path).as_dict())
+
+
+class TestContextDependentLabels:
+    """Labels resting on what the turn did, not on what the prompt says.
+
+    The classifier is shown one prompt and nothing else. Four near-identical
+    `continue` prompts in the real reference set are split trivial/complex on
+    what each went on to drive — 9 calls against 60 — which is information the
+    prompt text does not carry. Kappa over those rows charges the classifier for
+    a distinction it could not draw, so the figure is reported both ways.
+
+    The worked case below is hand-computable: three rows agree, the fourth
+    confuses trivial with complex at maximum ordinal distance.
+
+      observed = 3/4 = 0.75
+      expected = 8/16 = 0.5
+      kappa    = (0.75 - 0.5) / (1 - 0.5) = 0.5
+
+    Dropping the marked row leaves three exact agreements, so kappa is 1.0.
+    """
+
+    ROWS = [
+        ("t1", "coding", "trivial", ""),
+        ("t2", "coding", "complex", ""),
+        ("t3", "coding", "moderate", ""),
+        ("t4", "coding", "complex", "y"),
+    ]
+    PREDICTED = {
+        "t1": found(Category.CODING, Complexity.TRIVIAL),
+        "t2": found(Category.CODING, Complexity.COMPLEX),
+        "t3": found(Category.CODING, Complexity.MODERATE),
+        # The hazard: a bare "continue" that drove 60 calls, read as trivial.
+        "t4": found(Category.CODING, Complexity.TRIVIAL),
+    }
+
+    def _report(self, tmp_path, rows=None, predicted=None):
+        rows = self.ROWS if rows is None else rows
+        turns = [turn(tid, f"prompt {tid}") for tid, _, _, _ in rows]
+        labels = LabelSet.load(write_labels_ctx(tmp_path / "l.csv", rows))
+        return build_report(
+            turns, self.PREDICTED if predicted is None else predicted, labels
+        )
+
+    def test_flag_is_read_from_the_sheet(self, tmp_path):
+        labels = LabelSet.load(write_labels_ctx(tmp_path / "l.csv", self.ROWS))
+        assert labels.context_dependent_ids == {"t4"}
+
+    def test_sheet_without_the_column_still_loads(self, tmp_path):
+        """Sheets written before the column existed must keep working."""
+        labels = LabelSet.load(
+            write_labels(tmp_path / "l.csv", [("t1", "coding", "trivial")])
+        )
+        assert labels.context_dependent_ids == set()
+        assert labels.labels["t1"].context_dependent is False
+
+    @pytest.mark.parametrize("flag", ["y", "Y", "yes", "true", "1", "TRUE"])
+    def test_truthy_spellings(self, tmp_path, flag):
+        rows = [("t1", "coding", "trivial", flag)]
+        labels = LabelSet.load(write_labels_ctx(tmp_path / "l.csv", rows))
+        assert labels.labels["t1"].context_dependent is True
+
+    @pytest.mark.parametrize("flag", ["", "n", "no", "false", "0"])
+    def test_falsy_spellings(self, tmp_path, flag):
+        rows = [("t1", "coding", "trivial", flag)]
+        labels = LabelSet.load(write_labels_ctx(tmp_path / "l.csv", rows))
+        assert labels.labels["t1"].context_dependent is False
+
+    def test_unreadable_flag_names_the_line(self, tmp_path):
+        rows = [("t1", "coding", "trivial", "maybe")]
+        with pytest.raises(LabelError) as exc:
+            LabelSet.load(write_labels_ctx(tmp_path / "l.csv", rows))
+        assert "line 2" in str(exc.value)
+        assert "context_dependent" in str(exc.value)
+
+    def test_exported_sheet_carries_the_column_blank(self, tmp_path):
+        out = tmp_path / "sheet.csv"
+        export_template([turn("t1", "p")], out)
+        header, row = out.read_text(encoding="utf-8").splitlines()[:2]
+        assert "context_dependent" in header
+        assert row.split(",")[header.split(",").index("context_dependent")] == ""
+
+    def test_headline_figure_still_includes_the_marked_rows(self, tmp_path):
+        """Marking a row must not silently drop it from the main number."""
+        report = self._report(tmp_path)
+        assert report.compared == 4
+        assert report.complexity.n == 4
+        assert report.complexity.kappa == pytest.approx(0.5)
+
+    def test_excluded_figure_drops_exactly_the_marked_rows(self, tmp_path):
+        report = self._report(tmp_path)
+        assert report.context_dependent == 1
+        assert report.complexity_excluding.n == 3
+        assert report.complexity_excluding.kappa == pytest.approx(1.0)
+        assert report.category_excluding.n == 3
+
+    def test_delta_shows_what_the_marked_rows_cost(self, tmp_path):
+        report = self._report(tmp_path)
+        assert report.context_kappa_delta == pytest.approx(0.5)
+
+    def test_nothing_marked_reports_one_figure_only(self, tmp_path):
+        rows = [(tid, cat, cx, "") for tid, cat, cx, _ in self.ROWS]
+        report = self._report(tmp_path, rows=rows)
+        assert report.context_dependent == 0
+        assert report.complexity_excluding is None
+        assert report.context_kappa_delta is None
+
+    def test_everything_marked_leaves_no_remainder(self, tmp_path):
+        rows = [(tid, cat, cx, "y") for tid, cat, cx, _ in self.ROWS]
+        report = self._report(tmp_path, rows=rows)
+        assert report.context_dependent == 4
+        assert report.complexity_excluding is None
+
+    def test_the_excluded_prompts_are_named_for_audit(self, tmp_path):
+        report = self._report(tmp_path)
+        assert report.context_prompts == ["prompt t4"]
+
+    def test_report_prints_both_figures(self, tmp_path):
+        text = format_report(self._report(tmp_path))
+        assert "Excluding 1 context-dependent label" in text
+        assert "complexity (excl.)" in text
+        assert "prompt t4" in text
+        assert "+0.500" in text
+
+    def test_report_says_when_none_are_marked(self, tmp_path):
+        rows = [(tid, cat, cx, "") for tid, cat, cx, _ in self.ROWS]
+        text = format_report(self._report(tmp_path, rows=rows))
+        assert "none marked" in text
+
+    def test_report_says_when_there_is_no_remainder(self, tmp_path):
+        rows = [(tid, cat, cx, "y") for tid, cat, cx, _ in self.ROWS]
+        text = format_report(self._report(tmp_path, rows=rows))
+        assert "no remainder to compare" in text
+
+    def test_json_carries_both_figures(self, tmp_path):
+        import json
+
+        payload = json.loads(json.dumps(self._report(tmp_path).as_dict()))
+        block = payload["excluding_context_dependent"]
+        assert block["excluded"] == 1
+        assert block["complexity"]["n"] == 3
+        assert block["complexity"]["kappa"] == 1.0
+        assert payload["after_escalation"]["complexity"]["n"] == 4
+
+    def test_json_omits_the_block_when_nothing_is_marked(self, tmp_path):
+        rows = [(tid, cat, cx, "") for tid, cat, cx, _ in self.ROWS]
+        assert self._report(tmp_path, rows=rows).as_dict()[
+            "excluding_context_dependent"
+        ] is None
 
 
 class TestCli:

@@ -26,10 +26,13 @@ from tokenlens.classify.schema import (
 )
 from tokenlens.models import Turn
 
-FIELDS = ("turn_id", "prompt", "category", "complexity", "notes")
+FIELDS = ("turn_id", "prompt", "category", "complexity", "context_dependent", "notes")
 
 _CATEGORIES = tuple(c.value for c in Category)
 _COMPLEXITIES = tuple(c.value for c in Complexity)
+
+_TRUE = {"y", "yes", "true", "1"}
+_FALSE = {"", "n", "no", "false", "0"}
 
 
 class LabelError(ValueError):
@@ -42,6 +45,15 @@ class Label:
     category: Category
     complexity: Complexity
     notes: str = ""
+    context_dependent: bool = False
+    """This label rests on something the classifier is never shown.
+
+    The classifier sees one prompt and nothing else. Where the labeller drew on
+    what the turn actually went on to do, agreement measures a distinction the
+    classifier had no way to draw, and kappa is charged for it. Marking the row
+    does not drop it — `build_report` reports the figure both ways, because
+    which one is the honest headline is a judgement, not a default.
+    """
 
 
 @dataclass(slots=True)
@@ -63,6 +75,11 @@ class LabelSet:
     @property
     def turn_ids(self) -> set[str]:
         return set(self.labels)
+
+    @property
+    def context_dependent_ids(self) -> set[str]:
+        """Turn ids whose label draws on more than the prompt text."""
+        return {i for i, label in self.labels.items() if label.context_dependent}
 
     def overlap(self, other: LabelSet) -> list[str]:
         """Turn ids both label, in a stable order for aligned comparison."""
@@ -138,11 +155,21 @@ class LabelSet:
                 if turn_id in labels:
                     raise LabelError(f"{path.name} line {line}: duplicate turn_id {turn_id!r}")
 
+                # Optional column: a sheet written before it existed still loads,
+                # and simply marks nothing.
+                flag = (row.get("context_dependent") or "").strip().lower()
+                if flag not in _TRUE and flag not in _FALSE:
+                    raise LabelError(
+                        f"{path.name} line {line}: context_dependent must be one of "
+                        f"{', '.join(sorted(_TRUE))} or left blank (got {flag!r})"
+                    )
+
                 labels[turn_id] = Label(
                     turn_id=turn_id,
                     category=Category(category),
                     complexity=Complexity(complexity),
                     notes=(row.get("notes") or "").strip(),
+                    context_dependent=flag in _TRUE,
                 )
 
         return cls(labels=labels, source=str(path))
@@ -173,6 +200,7 @@ def export_template(
                     "prompt": " ".join((turn.prompt_text or "").split()),
                     "category": "",
                     "complexity": "",
+                    "context_dependent": "",
                     "notes": "",
                 }
             )

@@ -12,11 +12,19 @@ Three comparisons matter, and reporting fewer of them overstates the result:
   ceiling. Complexity is a judgement call, so a classifier matching a single
   labeller 80% of the time means something different depending on whether two
   humans agree 95% or 80% of the time.
+
+Where a label was marked `context_dependent`, the figure is reported a second
+time without those rows. The classifier is shown one prompt and nothing else, so
+a label that rests on what the turn went on to do asks it for a distinction it
+cannot see, and kappa charges it for the miss. Both numbers are printed and
+neither is called the headline: quoting only the whole set understates the
+classifier, quoting only the filtered set flatters it, and picking one silently
+is the kind of choice this project reports rather than makes.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from tokenlens.classify.schema import Category, Classification, Complexity
@@ -50,11 +58,26 @@ class ValidationReport:
     human: dict[str, Agreement] | None = None
     human_subset: int = 0
     examples: dict[tuple[str, str], list[str]] | None = None
+    context_dependent: int = 0
+    category_excluding: Agreement | None = None
+    complexity_excluding: Agreement | None = None
+    context_prompts: list[str] = field(default_factory=list)
 
     @property
     def complexity_kappa_delta(self) -> float:
         """Change in weighted kappa attributable to escalation."""
         return self.complexity.kappa - self.complexity_before.kappa
+
+    @property
+    def context_kappa_delta(self) -> float | None:
+        """How much the context-dependent rows moved the complexity kappa.
+
+        Positive means they were holding the figure down — the classifier was
+        being charged for distinctions the prompt text does not carry.
+        """
+        if self.complexity_excluding is None:
+            return None
+        return self.complexity_excluding.kappa - self.complexity.kappa
 
     def as_dict(self) -> dict:
         return {
@@ -82,6 +105,17 @@ class ValidationReport:
                     "complexity": self.human["complexity"].as_dict(),
                 }
                 if self.human
+                else None
+            ),
+            "excluding_context_dependent": (
+                {
+                    "excluded": self.context_dependent,
+                    "prompts": list(self.context_prompts),
+                    "category": self.category_excluding.as_dict(),
+                    "complexity": self.complexity_excluding.as_dict(),
+                    "complexity_kappa_delta": round(self.context_kappa_delta or 0.0, 4),
+                }
+                if self.category_excluding and self.complexity_excluding
                 else None
             ),
         }
@@ -117,6 +151,10 @@ def build_report(
     before_category: list[str] = []
     before_complexity: list[str] = []
     examples: dict[tuple[str, str], list[str]] = {}
+    # Parallel to the label lists: False where the row rests on context the
+    # classifier never saw, so the second comparison can drop exactly those.
+    keep: list[bool] = []
+    context_prompts: list[str] = []
 
     escalated = 0
     changed = 0
@@ -124,6 +162,10 @@ def build_report(
     for turn_id in turn_ids:
         label = labels.labels[turn_id]
         found = classifications[turn_id]
+        keep.append(not label.context_dependent)
+        if label.context_dependent:
+            prompt = by_id[turn_id].prompt_text if turn_id in by_id else None
+            context_prompts.append(" ".join(prompt.split())[:110] if prompt else turn_id)
 
         ref_category.append(label.category.value)
         ref_complexity.append(label.complexity.value)
@@ -149,6 +191,27 @@ def build_report(
             prompt = by_id[turn_id].prompt_text if turn_id in by_id else None
             if prompt:
                 examples.setdefault(key, []).append(" ".join(prompt.split())[:110])
+
+    # The same comparison with the context-dependent rows dropped. Computed only
+    # when some were marked and some survive: "excluding nothing" is the figure
+    # already reported, and an empty remainder measures nothing at all.
+    category_excluding = None
+    complexity_excluding = None
+    if context_prompts and any(keep):
+        def without(values: list[str]) -> list[str]:
+            return [v for v, k in zip(values, keep) if k]
+
+        category_excluding = agreement(
+            without(ref_category),
+            without(got_category),
+            axis="category (excl.)",
+        )
+        complexity_excluding = agreement(
+            without(ref_complexity),
+            without(got_complexity),
+            axis="complexity (excl.)",
+            ordinal=COMPLEXITY_ORDER,
+        )
 
     human = None
     human_subset = 0
@@ -190,6 +253,23 @@ def build_report(
         human=human,
         human_subset=human_subset,
         examples=examples,
+        context_dependent=len(context_prompts),
+        category_excluding=category_excluding,
+        complexity_excluding=complexity_excluding,
+        context_prompts=context_prompts,
+    )
+
+
+# Wide enough for the longest axis name, "complexity (excl.)", so the two
+# agreement tables line up under one another rather than stepping sideways.
+_AXIS = 18
+
+
+def _row(result: Agreement) -> str:
+    weighted = " (weighted)" if result.weighted else ""
+    return (
+        f"{result.axis:<{_AXIS}} {result.n:>4} {result.observed:>6.1%} "
+        f"{result.kappa:>7.3f}   {result.strength.value}{weighted}"
     )
 
 
@@ -209,18 +289,45 @@ def format_report(report: ValidationReport) -> str:
         return "\n".join(out)
 
     line("Agreement with hand labels")
-    line(f"  {'axis':<14} {'n':>4} {'raw':>7} {'kappa':>7}   interpretation")
+    line(f"  {'axis':<{_AXIS}} {'n':>4} {'raw':>7} {'kappa':>7}   interpretation")
     for result in (report.category, report.complexity):
-        weighted = " (weighted)" if result.weighted else ""
-        line(
-            f"  {result.axis:<14} {result.n:>4} {result.observed:>6.1%} "
-            f"{result.kappa:>7.3f}   {result.strength.value}{weighted}"
-        )
+        line("  " + _row(result))
     line()
     line("  Raw agreement is shown for continuity with other reports, but kappa is")
     line("  the figure that matters: on a skewed label mix, always answering the")
     line("  most common class scores well on raw agreement while learning nothing.")
     line()
+
+    if report.category_excluding and report.complexity_excluding:
+        line(
+            f"Excluding {report.context_dependent} context-dependent "
+            f"{'label' if report.context_dependent == 1 else 'labels'}"
+        )
+        for result in (report.category_excluding, report.complexity_excluding):
+            line("  " + _row(result))
+        delta = report.context_kappa_delta or 0.0
+        line(f"  complexity kappa moves {delta:+.3f} with these rows dropped")
+        line()
+        line("  These labels were marked as resting on what the turn went on to do.")
+        line("  The classifier is shown the prompt and nothing else, so on these rows")
+        line("  it is charged for a distinction it cannot see. Neither figure is the")
+        line("  headline: quote both, or quote one and say which.")
+        for prompt in report.context_prompts[:6]:
+            line(f"      {prompt!r}")
+        if len(report.context_prompts) > 6:
+            line(f"      ... and {len(report.context_prompts) - 6} more")
+        line()
+    elif report.context_dependent:
+        line(
+            f"All {report.context_dependent} compared labels are marked "
+            "context-dependent, so there is no remainder to compare."
+        )
+        line()
+    else:
+        line("Context-dependent labels: none marked")
+        line("  Mark a row in the sheet where the label rests on what the turn did,")
+        line("  not on what the prompt says, and the figure is reported both ways.")
+        line()
 
     line("Effect of confidence-gated escalation")
     line(
