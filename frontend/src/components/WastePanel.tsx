@@ -38,7 +38,7 @@ export function WasteSummary({ waste }: { waste: Waste }) {
         </div>
       </div>
 
-      <div className="panel" style={{ marginTop: 10 }}>
+      <div className="panel stack">
         <h3>Waste bands</h3>
         <div className="bars">
           {waste.bands.map((band) => (
@@ -81,10 +81,10 @@ export function Provenance({ waste }: { waste: Waste }) {
   const { models, human_turns: humanTurns } = source
 
   return (
-    <div className="panel provenance-panel" style={{ marginTop: 10 }}>
+    <div className="panel provenance-panel stack">
       <h3>Where these labels came from</h3>
 
-      <p className="section-note" style={{ maxWidth: '74ch' }}>
+      <p className="section-note measure-wide">
         {source.kind === 'hand-labelled' && (
           <>
             Scored from hand labels, not classifier predictions — so these figures say
@@ -126,7 +126,7 @@ export function Provenance({ waste }: { waste: Waste }) {
       )}
 
       {flags.escalated > 0 && (
-        <p className="section-note" style={{ maxWidth: '74ch' }}>
+        <p className="section-note measure-wide">
           {flags.escalated} prompt{flags.escalated === 1 ? '' : 's'} escalated to a
           stronger model; {flags.escalation_changed_tier} of those changed the required
           tier — the rest confirmed the first answer.
@@ -154,7 +154,7 @@ export function Heatmap({ waste }: { waste: Waste }) {
   return (
     <div className="panel">
       <h3>Task complexity vs. model tier used</h3>
-      <div className="scroll-x" style={{ border: 'none' }}>
+      <div className="scroll-x borderless">
         <table className="heatmap">
           <thead>
             <tr>
@@ -209,10 +209,7 @@ export function Heatmap({ waste }: { waste: Waste }) {
       </div>
       <div className="legend">
         <span>
-          <span
-            className="swatch"
-            style={{ border: '1px solid var(--crit)', background: 'transparent' }}
-          />
+          <span className="swatch outline" />
           outlined = overshoot (tier used exceeded tier required)
         </span>
         <span>shading = waste concentration</span>

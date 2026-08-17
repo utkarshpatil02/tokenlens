@@ -13,6 +13,9 @@ import type { LabelQueue, PartialLabel } from '../engine/labeling'
 import { formatMoney } from '../engine/money'
 import { modelsUsed } from '../engine/models'
 import { pct, usd } from '../format'
+import { Button } from './ui/Button'
+import { Notice } from './ui/Notice'
+import { Progress as ProgressBar } from './ui/Progress'
 
 interface Props {
   queue: LabelQueue
@@ -168,8 +171,10 @@ export function LabelingPanel({ queue, labels, onChange, onDone, onCancel }: Pro
       <Progress queue={queue} progress={progress} />
 
       {finished ? (
-        <div className="notice">
-          <h3>Every prompt is labelled</h3>
+        <Notice
+          title="Every prompt is labelled"
+          actions={<Button onClick={() => go(0)}>Review from the top</Button>}
+        >
           <p>
             All {total} turns carrying prompt text are done — {usd(
               formatMoney(progress.labelledCost),
@@ -180,10 +185,7 @@ export function LabelingPanel({ queue, labels, onChange, onDone, onCancel }: Pro
                 queue.unlabellable === 1 ? '' : 's'
               } carry no prompt text, so there is nothing to judge.`}
           </p>
-          <button type="button" onClick={() => go(0)}>
-            Review from the top
-          </button>
-        </div>
+        </Notice>
       ) : (
         <>
           <PromptCard
@@ -227,27 +229,22 @@ function Progress({
   const shortPass = 10
 
   return (
-    <div className="labeler-progress">
-      <div className="labeler-track">
-        <span
-          className="labeler-fill"
-          style={{ width: `${Math.min(100, progress.spendShare * 100)}%` }}
-        />
-      </div>
-      <div className="labeler-progress-meta">
-        <span className="labeler-covered">{pct(progress.spendShare)} of spend covered</span>
-        <span>
-          {progress.labelled} of {progress.total} turns ·{' '}
-          {usd(formatMoney(progress.labelledCost))} of{' '}
-          {usd(formatMoney(progress.queueCost))}
+    <ProgressBar
+      share={progress.spendShare}
+      label={`${pct(progress.spendShare)} of labellable spend covered`}
+    >
+      <span className="labeler-covered">{pct(progress.spendShare)} of spend covered</span>
+      <span>
+        {progress.labelled} of {progress.total} turns ·{' '}
+        {usd(formatMoney(progress.labelledCost))} of{' '}
+        {usd(formatMoney(progress.queueCost))}
+      </span>
+      {progress.labelled === 0 && progress.total > shortPass && (
+        <span className="quiet">
+          the top {shortPass} carry {pct(spendCoveredBy(queue, shortPass))} of it
         </span>
-        {progress.labelled === 0 && progress.total > shortPass && (
-          <span className="quiet">
-            the top {shortPass} carry {pct(spendCoveredBy(queue, shortPass))} of it
-          </span>
-        )}
-      </div>
-    </div>
+      )}
+    </ProgressBar>
   )
 }
 
@@ -294,6 +291,7 @@ function PromptCard({
               key={category}
               type="button"
               className={`labeler-choice${label?.category === category ? ' chosen' : ''}`}
+              aria-pressed={label?.category === category}
               onClick={() => onChoose('category', category)}
             >
               <span className="labeler-choice-name">
@@ -321,6 +319,7 @@ function PromptCard({
               className={`labeler-choice${
                 label?.complexity === complexity ? ' chosen' : ''
               }`}
+              aria-pressed={label?.complexity === complexity}
               onClick={() => onChoose('complexity', complexity)}
             >
               <span className="labeler-choice-name">

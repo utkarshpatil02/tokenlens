@@ -1,5 +1,6 @@
 import type { Overview as OverviewData } from '../types'
 import { compact, tokens, usd } from '../format'
+import { StatCard } from './ui/StatCard'
 
 interface Props {
   data: OverviewData
@@ -9,37 +10,32 @@ interface Props {
 export function Overview({ data }: Props) {
   return (
     <div className="grid stats">
-      <div className="panel stat">
-        <div className="value">{usd(data.total_cost)}</div>
-        <div className="label">total spend</div>
-        {/* An uploaded export often carries no session column at all, and
-            "across 0 sessions" reads as a bug rather than as absent data. */}
-        <div className="sub">
-          {data.sessions > 0
+      <StatCard
+        value={usd(data.total_cost)}
+        label="total spend"
+        /* An uploaded export often carries no session column at all, and
+           "across 0 sessions" reads as a bug rather than as absent data. */
+        sub={
+          data.sessions > 0
             ? `across ${data.sessions} session${data.sessions === 1 ? '' : 's'}`
-            : 'no session ids in this source'}
-        </div>
-      </div>
-
-      <div className="panel stat">
-        <div className="value">{compact(data.calls)}</div>
-        <div className="label">API requests</div>
-        <div className="sub">{tokens(data.total_tokens)} tokens</div>
-      </div>
-
-      <div className="panel stat">
-        <div className="value">{compact(data.turns)}</div>
-        <div className="label">turns</div>
-        <div className="sub">{data.scorable_turns} with prompt text</div>
-      </div>
-
-      <div className="panel stat">
-        <div className="value">{data.mean_calls_per_turn}</div>
-        <div className="label">mean calls / turn</div>
-        <div className="sub">
-          {data.mean_calls_per_turn > 1.5 ? 'agentic usage' : 'single-shot usage'}
-        </div>
-      </div>
+            : 'no session ids in this source'
+        }
+      />
+      <StatCard
+        value={compact(data.calls)}
+        label="API requests"
+        sub={`${tokens(data.total_tokens)} tokens`}
+      />
+      <StatCard
+        value={compact(data.turns)}
+        label="turns"
+        sub={`${data.scorable_turns} with prompt text`}
+      />
+      <StatCard
+        value={data.mean_calls_per_turn}
+        label="mean calls / turn"
+        sub={data.mean_calls_per_turn > 1.5 ? 'agentic usage' : 'single-shot usage'}
+      />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { CSV_PROMPT } from './csvPrompt'
+import { Button } from './ui/Button'
 
 /**
  * "I don't have a file in the right shape."
@@ -52,9 +53,13 @@ export function ExportPrompt() {
       </p>
 
       <div className="prompt-actions">
-        <button type="button" className="primary" onClick={() => void copy()}>
+        <Button
+          variant="primary"
+          icon={state === 'copied' ? 'check' : 'copy'}
+          onClick={() => void copy()}
+        >
           {state === 'copied' ? 'Copied' : 'Copy prompt'}
-        </button>
+        </Button>
         <span className="section-note" role="status">
           {state === 'failed'
             ? 'Your browser blocked the clipboard — select the text below and copy it.'

@@ -8,6 +8,9 @@ import type { LabelQueue } from '../engine/labeling'
 import { formatMoney } from '../engine/money'
 import { pct, usd } from '../format'
 import { PROVIDERS, keyStorageKey, providerById } from './providers'
+import { Button } from './ui/Button'
+import { Notice } from './ui/Notice'
+import { Progress as ProgressBar } from './ui/Progress'
 
 interface Props {
   queue: LabelQueue
@@ -174,6 +177,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
                     className={`labeler-choice${
                       option.id === providerId ? ' chosen' : ''
                     }`}
+                    aria-pressed={option.id === providerId}
                     onClick={() => chooseProvider(option.id)}
                   >
                     <span className="labeler-choice-name">{option.name}</span>
@@ -197,6 +201,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
                       key={option ?? 'all'}
                       type="button"
                       className={`labeler-choice${limit === option ? ' chosen' : ''}`}
+                      aria-pressed={limit === option}
                       onClick={() => setLimit(option)}
                     >
                       <span className="labeler-choice-name">
@@ -228,15 +233,15 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
                     ` · ${existing.size} already judged and not re-sent`}
                 </span>
               </div>
-              <p className="section-note" style={{ maxWidth: '70ch' }}>
+              <p className="section-note measure">
                 {estimate.note}
               </p>
             </div>
           </div>
 
-          <div className="panel" style={{ marginTop: 10 }}>
+          <div className="panel stack">
             <h3>{provider.name} API key</h3>
-            <label className="mapper-field" style={{ maxWidth: 520 }}>
+            <label className="mapper-field field-wide">
               <span className="mapper-label">
                 secret key<span className="req"> required</span>
               </span>
@@ -249,7 +254,7 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
                 onChange={(event) => setKey(event.target.value.trim())}
               />
             </label>
-            <p className="section-note" style={{ maxWidth: '70ch' }}>
+            <p className="section-note measure">
               {provider.keyHelp} Get one at{' '}
               <a href={provider.keyUrl} target="_blank" rel="noreferrer">
                 {provider.keyUrlLabel}
@@ -295,13 +300,13 @@ export function ClassifyPanel({ queue, existing, onClassified, onClose }: Props)
       {state.kind === 'done' && <Summary run={state.run} onAgain={() => setState({ kind: 'idle' })} />}
 
       {state.kind === 'failed' && (
-        <div className="notice error">
-          <h3>The run could not start</h3>
+        <Notice
+          title="The run could not start"
+          tone="error"
+          actions={<Button onClick={() => setState({ kind: 'idle' })}>Back</Button>}
+        >
           <p>{state.message}</p>
-          <button type="button" onClick={() => setState({ kind: 'idle' })}>
-            Back
-          </button>
-        </div>
+        </Notice>
       )}
     </div>
   )
@@ -317,29 +322,33 @@ function Running({
   const share = progress.total ? progress.done / progress.total : 0
   return (
     <div className="panel">
-      <div className="labeler-progress">
-        <div className="labeler-track">
-          <span className="labeler-fill" style={{ width: `${share * 100}%` }} />
-        </div>
-        <div className="labeler-progress-meta">
-          <span className="labeler-covered">
-            {pct(progress.spendShare)} of spend covered
-          </span>
-          <span>
-            {progress.done} of {progress.total} classified
-            {progress.failed > 0 && ` · ${progress.failed} failed`}
-          </span>
-        </div>
+      {/* A run costs money and takes minutes, so its state is announced rather
+          than only drawn. Polite, not assertive: this updates once per prompt
+          and should not interrupt whatever is being read. */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {progress.done} of {progress.total} prompts classified,{' '}
+        {pct(progress.spendShare)} of spend covered
+        {progress.failed > 0 && `, ${progress.failed} failed`}
       </div>
+      <ProgressBar
+        share={share}
+        label={`${progress.done} of ${progress.total} prompts classified`}
+      >
+        <span className="labeler-covered">
+          {pct(progress.spendShare)} of spend covered
+        </span>
+        <span>
+          {progress.done} of {progress.total} classified
+          {progress.failed > 0 && ` · ${progress.failed} failed`}
+        </span>
+      </ProgressBar>
       <div className="labeler-nav">
         <span className="labeler-hint">
           {progress.inFlight
             ? 'Working — stopping keeps everything already classified.'
             : 'Finishing up…'}
         </span>
-        <button type="button" onClick={onStop}>
-          Stop
-        </button>
+        <Button onClick={onStop}>Stop</Button>
       </div>
     </div>
   )
@@ -347,18 +356,21 @@ function Running({
 
 function Summary({ run, onAgain }: { run: ClassifyRun; onAgain: () => void }) {
   return (
-    <div className="notice">
-      <h3>
-        {run.classifications.size} prompt{run.classifications.size === 1 ? '' : 's'}{' '}
-        classified
-      </h3>
+    <Notice
+      title={`${run.classifications.size} prompt${
+        run.classifications.size === 1 ? '' : 's'
+      } classified`}
+      actions={
+        run.remaining > 0 ? <Button onClick={onAgain}>Classify more</Button> : undefined
+      }
+    >
       <p>
         Covering {pct(run.spendShare)} of labellable spend.
         {run.remaining > 0 &&
           ` ${run.remaining} turn${run.remaining === 1 ? '' : 's'} remain unjudged and are not counted as waste-free — they are not counted at all.`}
       </p>
       {run.abandonedBecause && (
-        <p style={{ color: 'var(--crit)' }}>
+        <p className="text-crit">
           Stopped early after repeated failures: {run.abandonedBecause}
         </p>
       )}
@@ -376,11 +388,6 @@ function Summary({ run, onAgain }: { run: ClassifyRun; onAgain: () => void }) {
           </ul>
         </details>
       )}
-      {run.remaining > 0 && (
-        <button type="button" onClick={onAgain}>
-          Classify more
-        </button>
-      )}
-    </div>
+    </Notice>
   )
 }

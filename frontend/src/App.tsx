@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { fetchAnalysis, fetchHealth, runClassification } from './api'
-import { CallsPerTurn, CostBreakdown } from './components/CostBreakdown'
-import { Leaderboard } from './components/Leaderboard'
-import { Overview } from './components/Overview'
-import { IngestPanel } from './components/IngestPanel'
-import { Heatmap, WasteSummary } from './components/WastePanel'
-import { usd } from './format'
+import { AppShell } from './components/AppShell'
+import { Button } from './components/ui/Button'
+import { Icon } from './components/ui/Icon'
+import { Notice } from './components/ui/Notice'
+import { DemoPage } from './pages/DemoPage'
+import { OverviewPage } from './pages/OverviewPage'
+import { SpendPage } from './pages/SpendPage'
+import { UploadPage } from './pages/UploadPage'
+import { WastePage } from './pages/WastePage'
+import { ROUTES, useHashRoute } from './router'
+import { useUploadSession } from './session'
+import { useTheme } from './theme'
 import type { Analysis, Health } from './types'
 
 export default function App() {
@@ -14,6 +20,12 @@ export default function App() {
   const [health, setHealth] = useState<Health | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [classifying, setClassifying] = useState(false)
+
+  const { route, tab, navigate } = useHashRoute()
+  const { theme, setTheme } = useTheme()
+  // Owned here, above the router, so navigating between pages cannot destroy a
+  // parsed file, a hand label, or a classifier answer that was paid for.
+  const session = useUploadSession()
 
   const load = useCallback(async () => {
     setError(null)
@@ -43,154 +55,79 @@ export default function App() {
     }
   }
 
-  if (error && !analysis) {
-    return (
-      <div className="app">
-        <div className="notice error">
-          <h3>Could not load analysis</h3>
-          <p>{error}</p>
-          <button onClick={() => void load()}>Retry</button>
-        </div>
-        {/* The upload path reads no backend and no snapshot, so it still works
-            when the reference figures cannot be loaded at all. */}
-        <IngestPanel />
-      </div>
-    )
-  }
+  // A route needing a file, reached without one — by a stale link or a reset.
+  // Redirecting silently would leave no trace of why; saying so does.
+  const needsFile =
+    !session.hasFile &&
+    (route === ROUTES.overview || route === ROUTES.spend || route === ROUTES.waste)
 
-  if (!analysis) {
-    return <div className="center">Reading local session logs…</div>
-  }
+  const body = () => {
+    if (needsFile) {
+      return (
+        <Notice
+          title="No file loaded"
+          actions={
+            <Button variant="primary" onClick={() => navigate(ROUTES.upload)}>
+              Upload an export
+            </Button>
+          }
+        >
+          <p className="measure">
+            This page reads a file you have analysed in this tab. Nothing is stored
+            between visits — that is the same property that keeps your export off any
+            server — so a link to it will not carry the data with it.
+          </p>
+        </Notice>
+      )
+    }
 
-  const { overview, waste, rate_table } = analysis
-  const unclassified = overview.scorable_turns - overview.classified_turns
-  const uncachedInput = analysis.cost_by_token_category.find(
-    (row) => row.category === 'input_tokens',
-  )
+    switch (route) {
+      case ROUTES.overview:
+        return <OverviewPage session={session} onNavigate={navigate} />
+      case ROUTES.spend:
+        return <SpendPage session={session} />
+      case ROUTES.waste:
+        return <WastePage session={session} tab={tab} onNavigate={navigate} />
+      case ROUTES.demo:
+        return analysis ? (
+          <DemoPage
+            analysis={analysis}
+            health={health}
+            error={error}
+            classifying={classifying}
+            onClassify={() => void classify()}
+          />
+        ) : error ? (
+          <Notice
+            title="Could not load the demo dataset"
+            tone="error"
+            actions={<Button onClick={() => void load()}>Retry</Button>}
+          >
+            <p>{error}</p>
+            <p className="section-note measure">
+              The upload path reads no backend and no snapshot, so it still works.
+            </p>
+          </Notice>
+        ) : (
+          <div className="center" role="status">
+            <Icon name="spinner" /> Reading local session logs…
+          </div>
+        )
+      default:
+        return <UploadPage session={session} onNavigate={navigate} />
+    }
+  }
 
   return (
-    <div className="app">
-      <header>
-        <div className="masthead">
-          <h1>TokenLens</h1>
-          <span className="provenance">
-            rate table v{rate_table.version} · {rate_table.updated} ·{' '}
-            {rate_table.currency}
-          </span>
-        </div>
-        <p className="tagline">
-          Observability tools report what you spent. This estimates what you should have
-          spent and scores the gap, measured against real Claude Code history.
-        </p>
-      </header>
-
-      {/* Ahead of the reference figures: a visitor with an export of their own
-          should not have to scroll past someone else's numbers to find the
-          thing that reads theirs. */}
-      <IngestPanel />
-
-      {analysis.snapshot?.static && (
-        <div className="notice" style={{ marginBottom: 4 }}>
-          <h3>Frozen snapshot</h3>
-          <p>
-            These are real figures from one developer's Claude Code history, captured{' '}
-            {new Date(analysis.generated_at).toLocaleDateString()}. There is no backend
-            here — analysis reads local session logs, which exist only on the machine
-            that produced them.
-            {analysis.snapshot.prompts_redacted &&
-              ' Prompt text is redacted; every figure is unmodified.'}{' '}
-            Run it against your own logs from{' '}
-            <a href="https://github.com/utkarshpatil02/tokenlens">the repository</a>.
-          </p>
-        </div>
-      )}
-
-      <section>
-        <div className="section-head">
-          <h2>Overview</h2>
-        </div>
-        <Overview data={overview} />
-      </section>
-
-      <section>
-        <div className="section-head">
-          <h2>Where the money went</h2>
-          {uncachedInput && (
-            <span className="section-note">
-              uncached input is only {usd(uncachedInput.cost)} — cost is carried by cache
-              traffic
-            </span>
-          )}
-        </div>
-        <CostBreakdown
-          byCategory={analysis.cost_by_token_category}
-          byModel={analysis.cost_by_model}
-        />
-      </section>
-
-      <section>
-        <div className="section-head">
-          <h2>Turn shape</h2>
-        </div>
-        <CallsPerTurn rows={analysis.calls_per_turn} />
-      </section>
-
-      {waste ? (
-        <>
-          <section>
-            <div className="section-head">
-              <h2>Waste</h2>
-              <span className="section-note">
-                {waste.scored_turns} of {overview.scorable_turns} turns scored
-                {unclassified > 0 && ` · ${unclassified} not yet classified`}
-              </span>
-            </div>
-            <WasteSummary waste={waste} />
-          </section>
-
-          <section>
-            <div className="section-head">
-              <h2>Complexity vs. tier</h2>
-            </div>
-            <Heatmap waste={waste} />
-          </section>
-
-          <section>
-            <div className="section-head">
-              <h2>Waste leaderboard</h2>
-              <span className="section-note">worst turns by estimated dollar waste</span>
-            </div>
-            <Leaderboard rows={waste.leaderboard} />
-          </section>
-        </>
-      ) : (
-        <section>
-          <div className="section-head">
-            <h2>Waste</h2>
-          </div>
-          <div className="notice">
-            <h3>Not measured yet</h3>
-            <p>
-              Waste scoring needs prompts classified by task complexity, which is the
-              only step that costs money. {overview.scorable_turns} prompts are ready.
-              Everything above needs none of it and is already complete.
-            </p>
-            {health?.has_api_key ? (
-              <button onClick={() => void classify()} disabled={classifying}>
-                {classifying
-                  ? 'Classifying…'
-                  : `Classify ${overview.scorable_turns} prompts`}
-              </button>
-            ) : (
-              <p>
-                Set <code>ANTHROPIC_API_KEY</code> and restart the API server to enable
-                this.
-              </p>
-            )}
-            {error && <p style={{ color: 'var(--crit)' }}>{error}</p>}
-          </div>
-        </section>
-      )}
-    </div>
+    <AppShell
+      route={route}
+      onNavigate={navigate}
+      hasFile={session.hasFile}
+      fileName={session.state.kind === 'ready' ? session.state.name : null}
+      theme={theme}
+      onTheme={setTheme}
+    >
+      {body()}
+    </AppShell>
   )
 }

@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 
 import { ExportPrompt } from './ExportPrompt'
+import { Button } from './ui/Button'
+import { Icon } from './ui/Icon'
 
 interface Props {
   onFile: (file: File) => void
@@ -50,6 +52,7 @@ export function FileDrop({ onFile, onSample, busy }: Props) {
       }}
       onDrop={handleDrop}
     >
+      <Icon name="upload" size={26} className="drop-icon" />
       <p className="drop-title">Drop a usage export here</p>
       <p className="drop-sub">
         CSV or TSV from Claude Console, OpenAI, Helicone, OpenRouter — or anything
@@ -57,7 +60,8 @@ export function FileDrop({ onFile, onSample, busy }: Props) {
       </p>
 
       <div className="drop-actions">
-        <label className="button-like">
+        <label className="button-like primary">
+          <Icon name="file" />
           Choose a file
           <input
             type="file"
@@ -72,9 +76,9 @@ export function FileDrop({ onFile, onSample, busy }: Props) {
             }}
           />
         </label>
-        <button type="button" onClick={onSample} disabled={busy}>
+        <Button onClick={onSample} disabled={busy}>
           Try a sample file
-        </button>
+        </Button>
       </div>
 
       <p className="drop-privacy">

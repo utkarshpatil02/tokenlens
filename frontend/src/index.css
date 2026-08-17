@@ -1,17 +1,26 @@
+/* Light is the base declaration. Dark is applied twice below — once for the OS
+   preference and once for an explicit choice — because CSS cannot share one
+   block between a media query and an attribute selector, and the three-state
+   toggle needs both. Keep the two dark blocks identical. */
 :root {
   --bg: #ffffff;
-  --panel: #fafafa;
-  --border: #e4e4e8;
-  --text: #1b1b1e;
-  --muted: #6b6b73;
-  --faint: #9a9aa2;
+  /* A third elevation level, for the frame around the content. */
+  --surface: #f7f8fa;
+  --panel: #fbfbfc;
+  --border: #e5e7eb;
+  --text: #16181d;
+  --muted: #5f6570;
+  /* Measured, not guessed: #9a9aa2 was 3.0:1 on white and #787f8b only 4.03:1,
+     both under the 4.5:1 floor for the 11px text this is used on. This is
+     4.83:1. */
+  --faint: #6b7280;
 
   --accent: #6d5fd4;
-  --accent-soft: #efedfb;
+  --accent-soft: #f0eefc;
 
-  --ok: #4a9d6f;
-  --warn: #d19a4a;
-  --bad: #d1704a;
+  --ok: #3f8a61;
+  --warn: #b5822f;
+  --bad: #c0603a;
   --crit: #b83d3d;
 
   /* Token categories are parts of one whole, so they use sequential steps of a
@@ -22,33 +31,105 @@
   --c4: #c9c3f2;
   --c5: #e2dff9;
 
-  --radius: 10px;
+  /* Text that sits on a filled --accent surface. Declared as a token because it
+     has to invert with the theme: the dark accent is light enough that white
+     text on it fails contrast. */
+  --accent-contrast: #ffffff;
+
+  /* Type scale. Twelve ad-hoc sizes (including 10.5, 11.5 and 12.5) collapsed
+     onto seven steps, so a new element has an obvious size to reach for rather
+     than a nearby half-pixel to invent. */
+  --t-xs: 11px;
+  --t-sm: 12px;
+  --t-md: 13px;
+  --t-base: 14px;
+  --t-lg: 15px;
+  --t-xl: 20px;
+  --t-2xl: 21px;
+
+  /* Spacing scale, 4px-based. */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+
+  --r-xs: 3px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-pill: 999px;
+  /* Retained: --radius is the name the layout rules were written against. */
+  --radius: var(--r-md);
+
+  /* Surfaces stay flat and rely on borders — the idiom for a dense data tool.
+     This is for genuinely raised things only, and is a no-op in dark mode where
+     a black shadow reads as dirt rather than lift. */
+  --shadow: 0 1px 2px rgb(0 0 0 / 4%), 0 4px 12px rgb(0 0 0 / 4%);
+
   color-scheme: light dark;
 }
 
+/* Dark, when the OS asks for it and the user has not overridden. */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16161a;
-    --panel: #1d1d21;
-    --border: #303038;
-    --text: #e9e9ec;
-    --muted: #9a9aa2;
-    --faint: #6b6b73;
+  :root:not([data-theme='light']) {
+    --bg: #0d0e12;
+    --surface: #14161b;
+    --panel: #191c22;
+    --border: #262a33;
+    --text: #e7e9ee;
+    --muted: #98a0ad;
+    --faint: #7d8695;
 
     --accent: #9c8ff0;
-    --accent-soft: #262046;
+    --accent-soft: #221d3d;
 
     --ok: #5cb383;
     --warn: #dda85c;
     --bad: #e08260;
-    --crit: #d15757;
+    --crit: #e06b6b;
 
     --c1: #9c8ff0;
     --c2: #8477dd;
     --c3: #6c5fc4;
     --c4: #544aa0;
     --c5: #3d367a;
+
+    /* The dark accent is a light lilac, so filled buttons take dark text. */
+    --accent-contrast: #0d0e12;
+    /* A black shadow on a near-black surface reads as dirt, not lift. */
+    --shadow: none;
   }
+}
+
+/* Dark, chosen explicitly. Identical to the block above. */
+:root[data-theme='dark'] {
+  --bg: #0d0e12;
+  --surface: #14161b;
+  --panel: #191c22;
+  --border: #262a33;
+  --text: #e7e9ee;
+  --muted: #98a0ad;
+  --faint: #7d8695;
+
+  --accent: #9c8ff0;
+  --accent-soft: #221d3d;
+
+  --ok: #5cb383;
+  --warn: #dda85c;
+  --bad: #e08260;
+  --crit: #e06b6b;
+
+  --c1: #9c8ff0;
+  --c2: #8477dd;
+  --c3: #6c5fc4;
+  --c4: #544aa0;
+  --c5: #3d367a;
+
+  --accent-contrast: #0d0e12;
+  --shadow: none;
 }
 
 * {
@@ -65,7 +146,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
+  font-size: var(--t-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -91,6 +172,238 @@ a {
   white-space: nowrap;
 }
 
+/* --- app shell ---------------------------------------------------------- */
+
+/* Sidebar plus content. The sidebar is a fixed rail rather than a grid column
+   so a long table in the content cannot widen it. */
+.shell {
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 232px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  z-index: 20;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s4) var(--s4) var(--s3);
+  font-weight: 650;
+  font-size: var(--t-lg);
+  letter-spacing: -0.01em;
+}
+
+.sidebar-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--r-xs);
+  background: var(--accent);
+}
+
+.sidebar-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s2) var(--s2) var(--s4);
+}
+
+.nav-group + .nav-group {
+  margin-top: var(--s4);
+}
+
+.nav-heading {
+  padding: 0 var(--s3) var(--s1);
+  font-size: var(--t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+
+/* Overrides the button base: nav items are full-width rows, not controls. */
+.nav-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 500;
+  padding: var(--s2) var(--s3);
+  min-height: 0;
+}
+
+.nav-item:hover:not(:disabled) {
+  background: var(--panel);
+  color: var(--text);
+  border-color: transparent;
+}
+
+.nav-item.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.nav-item:disabled {
+  opacity: 1;
+  color: var(--faint);
+  cursor: not-allowed;
+}
+
+.sidebar-foot {
+  padding: var(--s3);
+  border-top: 1px solid var(--border);
+}
+
+.content {
+  margin-left: 232px;
+  max-width: 1000px;
+  padding: var(--s6) var(--s5) var(--s8);
+}
+
+/* The first block in a view should not inherit a section's top margin. */
+.content > section:first-child {
+  margin-top: 0;
+}
+
+/* --- top bar (mobile only) ---------------------------------------------- */
+
+.topbar {
+  display: none;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+
+.topbar-brand {
+  font-weight: 650;
+}
+
+.topbar-file {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  margin-left: auto;
+  font-size: var(--t-xs);
+  color: var(--muted);
+  max-width: 45%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.drawer-toggle {
+  padding: var(--s1) var(--s2);
+}
+
+.drawer-bars,
+.drawer-bars::before,
+.drawer-bars::after {
+  display: block;
+  width: 15px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: var(--r-pill);
+}
+
+.drawer-bars::before,
+.drawer-bars::after {
+  content: '';
+  position: relative;
+}
+
+.drawer-bars::before {
+  top: -5px;
+}
+
+.drawer-bars::after {
+  top: 3.5px;
+}
+
+.drawer-scrim {
+  display: none;
+}
+
+/* --- tabs --------------------------------------------------------------- */
+
+/* Second-level navigation, for views of one subject. Deliberately flat: a
+   third level would be a sign the information architecture is wrong. */
+.tabs {
+  display: flex;
+  gap: var(--s1);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--s4);
+  overflow-x: auto;
+}
+
+.tab {
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: var(--s2) var(--s3);
+  white-space: nowrap;
+}
+
+.tab:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- theme toggle ------------------------------------------------------- */
+
+.theme-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+}
+
+.theme-option {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--t-xs);
+  padding: var(--s1) var(--s2);
+  min-height: 26px;
+  border-radius: var(--r-xs);
+}
+
+.theme-option:hover:not(:disabled) {
+  color: var(--text);
+  border-color: transparent;
+}
+
+.theme-option.chosen {
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 600;
+}
+
 /* --- layout ------------------------------------------------------------ */
 
 .app {
@@ -109,18 +422,18 @@ a {
 }
 
 .masthead h1 {
-  font-size: 20px;
+  font-size: var(--t-xl);
 }
 
 .provenance {
-  font-size: 12px;
+  font-size: var(--t-sm);
   color: var(--faint);
   font-variant-numeric: tabular-nums;
 }
 
 .tagline {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--t-md);
   margin: 0 0 24px;
   max-width: 62ch;
 }
@@ -139,14 +452,14 @@ section {
 }
 
 .section-head h2 {
-  font-size: 12px;
+  font-size: var(--t-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
 }
 
 .section-note {
-  font-size: 12px;
+  font-size: var(--t-sm);
   color: var(--faint);
 }
 
@@ -173,26 +486,26 @@ section {
 }
 
 .stat .value {
-  font-size: 21px;
+  font-size: var(--t-2xl);
   font-weight: 650;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .stat .label {
-  font-size: 12px;
+  font-size: var(--t-sm);
   color: var(--muted);
   margin-top: 1px;
 }
 
 .stat .sub {
-  font-size: 11.5px;
+  font-size: var(--t-xs);
   color: var(--faint);
-  margin-top: 3px;
+  margin-top: var(--s1);
 }
 
 .panel h3 {
-  font-size: 13px;
+  font-size: var(--t-md);
   margin-bottom: 10px;
 }
 
@@ -208,7 +521,7 @@ section {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12.5px;
+  font-size: var(--t-md);
 }
 
 .bar-row .name {
@@ -222,7 +535,7 @@ section {
   min-width: 40px;
   height: 16px;
   background: var(--border);
-  border-radius: 3px;
+  border-radius: var(--r-xs);
   overflow: hidden;
 }
 
@@ -256,14 +569,14 @@ section {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12.5px;
+  font-size: var(--t-md);
 }
 
 th {
   text-align: left;
   font-weight: 600;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--t-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 9px 12px;
@@ -295,7 +608,7 @@ th.num {
 
 .rationale {
   color: var(--faint);
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   margin-top: 2px;
 }
 
@@ -303,10 +616,10 @@ th.num {
 
 .pill {
   display: inline-block;
-  font-size: 10.5px;
+  font-size: var(--t-xs);
   font-weight: 600;
   padding: 1px 6px;
-  border-radius: 4px;
+  border-radius: var(--r-sm);
   background: var(--border);
   color: var(--muted);
   white-space: nowrap;
@@ -342,7 +655,7 @@ th.num {
 .heatmap {
   border-collapse: separate;
   border-spacing: 3px;
-  font-size: 12px;
+  font-size: var(--t-sm);
 }
 
 .heatmap th {
@@ -350,13 +663,13 @@ th.num {
   padding: 4px 8px;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 11.5px;
+  font-size: var(--t-sm);
 }
 
 .heatmap td {
   border: none;
   padding: 9px 10px;
-  border-radius: 6px;
+  border-radius: var(--r-sm);
   background: var(--panel);
   text-align: center;
   font-variant-numeric: tabular-nums;
@@ -374,7 +687,7 @@ th.num {
 }
 
 .heatmap td .cell-cost {
-  font-size: 11px;
+  font-size: var(--t-xs);
   color: var(--muted);
   display: block;
 }
@@ -390,43 +703,126 @@ th.num {
 }
 
 .notice h3 {
-  font-size: 13px;
+  font-size: var(--t-md);
   margin-bottom: 4px;
 }
 
 .notice p {
   margin: 0 0 8px;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: var(--t-md);
   max-width: 70ch;
 }
 
 .notice code {
   background: var(--border);
   padding: 1px 5px;
-  border-radius: 3px;
-  font-size: 11.5px;
+  border-radius: var(--r-xs);
+  font-size: var(--t-sm);
 }
 
 .notice.error {
   border-left-color: var(--crit);
 }
 
-button {
+.notice h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.notice-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.notice.error .notice-icon {
+  color: var(--crit);
+}
+
+.notice-actions {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  margin-top: var(--s3);
+}
+
+.notice-actions:empty {
+  display: none;
+}
+
+/* --- icons -------------------------------------------------------------- */
+
+/* Inline with the text baseline rather than sitting on it. */
+.icon {
+  flex-shrink: 0;
+  vertical-align: -0.18em;
+}
+
+.icon-spin {
+  animation: icon-spin 0.7s linear infinite;
+}
+
+@keyframes icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- buttons ------------------------------------------------------------ */
+
+/* Three levels, because "the one action to take here" was previously conveyed
+   only by a faint tint. Default is the workhorse; .primary is filled and there
+   should be at most one per screen; .ghost is for dismissals that should not
+   compete with either. */
+button,
+.button-like {
   font: inherit;
-  font-size: 12.5px;
+  font-size: var(--t-md);
   font-weight: 550;
-  padding: 6px 13px;
-  border-radius: 7px;
+  padding: var(--s1) var(--s3);
+  border-radius: var(--r-sm);
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
   cursor: pointer;
+  /* Taps and clicks land on the same target on a phone. */
+  min-height: 32px;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease,
+    color 0.12s ease;
 }
 
-button:hover:not(:disabled) {
+button:hover:not(:disabled),
+.button-like:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+button.primary,
+.button-like.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+button.primary:hover:not(:disabled),
+.button-like.primary:hover {
+  background: color-mix(in srgb, var(--accent) 86%, black);
+  border-color: color-mix(in srgb, var(--accent) 86%, black);
+  color: var(--accent-contrast);
+}
+
+button.ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+
+button.ghost:hover:not(:disabled) {
+  border-color: var(--border);
+  color: var(--text);
 }
 
 button:disabled {
@@ -434,10 +830,53 @@ button:disabled {
   cursor: default;
 }
 
+/* Was missing entirely: every control had a hover state and no keyboard
+   equivalent, so tabbing through the page showed nothing at all. */
+button:focus-visible,
+.button-like:focus-within,
+select:focus-visible,
+summary:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .center {
-  padding: 72px 20px;
+  padding: var(--s8) var(--s5);
   text-align: center;
   color: var(--muted);
+}
+
+/* --- utilities ---------------------------------------------------------- */
+
+/* A deliberately tiny set, replacing the 26 inline style props that had grown
+   across six components. Each one existed as a one-off literal before, which is
+   why the gap above a notice differed depending on the screen. */
+
+.text-crit {
+  color: var(--crit);
+}
+
+/* Prose stays readable rather than running the full width of a wide panel. */
+.measure {
+  max-width: 70ch;
+}
+
+.measure-wide {
+  max-width: 74ch;
+}
+
+.stack {
+  margin-top: var(--s3);
+}
+
+.actions-start {
+  justify-content: flex-start;
+}
+
+.borderless {
+  border: none;
 }
 
 /* --- upload & column mapping ------------------------------------------- */
@@ -445,9 +884,9 @@ button:disabled {
 .badge-private {
   border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
   color: var(--ok);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 1px 9px;
-  font-size: 11px;
+  font-size: var(--t-xs);
 }
 
 .dropzone {
@@ -466,16 +905,26 @@ button:disabled {
   background: var(--accent-soft);
 }
 
+/* Marks the drop target as a drop target before the copy is read. */
+.drop-icon {
+  color: var(--faint);
+  margin-bottom: var(--s2);
+}
+
+.dropzone.dragging .drop-icon {
+  color: var(--accent);
+}
+
 .drop-title {
   margin: 0;
-  font-size: 15px;
+  font-size: var(--t-lg);
   font-weight: 600;
 }
 
 .drop-sub {
   margin: 5px auto 0;
   max-width: 54ch;
-  font-size: 12.5px;
+  font-size: var(--t-md);
   color: var(--muted);
 }
 
@@ -489,36 +938,17 @@ button:disabled {
 
 .drop-privacy {
   margin: 14px 0 0;
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--faint);
 }
 
-/* Matches `button` so the file input's label does not read as a second style. */
+/* `.button-like` is the file input's label; it shares the button rules above so
+   it cannot drift into looking like a second style. It carries the focus ring
+   for the input it wraps, which is visually hidden. */
 .button-like {
-  font-size: 12.5px;
-  font-weight: 550;
-  padding: 6px 13px;
-  border-radius: 7px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.button-like:hover,
-button.primary {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-button.primary {
-  background: var(--accent-soft);
-}
-
-/* The file input is visually hidden, so the label carries the focus ring. */
-.button-like:focus-within {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
 }
 
 .mapper-head {
@@ -531,7 +961,7 @@ button.primary {
 }
 
 .mapper-head h3 {
-  font-size: 14px;
+  font-size: var(--t-base);
 }
 
 .mapper-head .section-note {
@@ -557,7 +987,7 @@ button.primary {
 }
 
 .mapper-label {
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--muted);
 }
 
@@ -570,9 +1000,9 @@ select,
 input[type='password'],
 input[type='text'] {
   font: inherit;
-  font-size: 12.5px;
+  font-size: var(--t-md);
   padding: 5px 8px;
-  border-radius: 7px;
+  border-radius: var(--r-sm);
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
@@ -594,7 +1024,7 @@ input[type='text']:focus {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 11px 14px;
-  font-size: 12.5px;
+  font-size: var(--t-md);
   margin-bottom: 14px;
 }
 
@@ -605,7 +1035,7 @@ input[type='text']:focus {
 .mapper-hint {
   display: block;
   color: var(--muted);
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   max-width: 70ch;
   margin-top: 2px;
 }
@@ -613,7 +1043,7 @@ input[type='text']:focus {
 .mapper-hint code {
   background: var(--border);
   padding: 0 4px;
-  border-radius: 3px;
+  border-radius: var(--r-xs);
 }
 
 .preview th.mapped {
@@ -623,7 +1053,7 @@ input[type='text']:focus {
 .col-role {
   display: block;
   font-weight: 400;
-  font-size: 10px;
+  font-size: var(--t-xs);
   color: var(--faint);
   text-transform: none;
   letter-spacing: 0;
@@ -637,7 +1067,7 @@ input[type='text']:focus {
   margin: 0;
   padding-left: 18px;
   color: var(--muted);
-  font-size: 12.5px;
+  font-size: var(--t-md);
 }
 
 .findings li {
@@ -650,7 +1080,7 @@ input[type='text']:focus {
 
 .issues {
   margin-top: 14px;
-  font-size: 12.5px;
+  font-size: var(--t-md);
 }
 
 .issues summary {
@@ -663,7 +1093,7 @@ input[type='text']:focus {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--muted);
   margin-top: 9px;
 }
@@ -672,9 +1102,48 @@ input[type='text']:focus {
   display: inline-block;
   width: 9px;
   height: 9px;
-  border-radius: 2px;
+  border-radius: var(--r-xs);
   margin-right: 5px;
   vertical-align: middle;
+}
+
+/* The overshoot key: an outline, matching how those cells are drawn. */
+.legend .swatch.outline {
+  border: 1px solid var(--crit);
+  background: transparent;
+}
+
+/* --- empty states -------------------------------------------------------- */
+
+/* Centred, quiet, and it says what would fill the space rather than only that
+   the space is empty. */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s1);
+  text-align: center;
+  padding: var(--s6) var(--s4);
+  color: var(--muted);
+}
+
+.empty-state .icon {
+  color: var(--faint);
+}
+
+.empty-state p {
+  margin: 0;
+  font-weight: 550;
+  color: var(--text);
+}
+
+/* Keeps a recommendation from collapsing to one word per line in a wide table. */
+.rec-cell {
+  min-width: 190px;
+}
+
+.field-wide {
+  max-width: 520px;
 }
 
 /* --- conversion prompt -------------------------------------------------- */
@@ -689,7 +1158,7 @@ input[type='text']:focus {
 
 .export-prompt > summary {
   cursor: pointer;
-  font-size: 12.5px;
+  font-size: var(--t-md);
   font-weight: 550;
   color: var(--accent);
   text-align: center;
@@ -715,7 +1184,7 @@ input[type='text']:focus {
 .prompt-text {
   width: 100%;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
+  font-size: var(--t-xs);
   line-height: 1.5;
   padding: 10px 12px;
   border: 1px solid var(--border);
@@ -746,18 +1215,18 @@ input[type='text']:focus {
   align-items: baseline;
   gap: 7px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 3px 11px;
   background: var(--bg);
 }
 
 .source-models code {
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--text);
 }
 
 .source-turns {
-  font-size: 11px;
+  font-size: var(--t-xs);
   color: var(--muted);
 }
 
@@ -766,14 +1235,14 @@ input[type='text']:focus {
 kbd {
   display: inline-block;
   font: inherit;
-  font-size: 10.5px;
+  font-size: var(--t-xs);
   font-weight: 600;
   min-width: 17px;
   text-align: center;
   padding: 0 4px;
   border: 1px solid var(--border);
   border-bottom-width: 2px;
-  border-radius: 4px;
+  border-radius: var(--r-sm);
   background: var(--bg);
   color: var(--muted);
 }
@@ -785,7 +1254,7 @@ kbd {
 .labeler-track {
   display: block;
   height: 7px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--border);
   overflow: hidden;
 }
@@ -794,7 +1263,7 @@ kbd {
   display: block;
   height: 100%;
   background: var(--accent);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   transition: width 0.18s ease;
 }
 
@@ -804,7 +1273,7 @@ kbd {
   flex-wrap: wrap;
   align-items: baseline;
   margin-top: 6px;
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--muted);
 }
 
@@ -826,20 +1295,20 @@ kbd {
 }
 
 .labeler-position {
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--faint);
   font-variant-numeric: tabular-nums;
 }
 
 .labeler-cost {
-  font-size: 19px;
+  font-size: var(--t-xl);
   font-weight: 600;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
 .labeler-meta {
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--muted);
 }
 
@@ -850,7 +1319,7 @@ kbd {
   border-radius: var(--radius);
   background: var(--bg);
   padding: 11px 13px;
-  font-size: 13px;
+  font-size: var(--t-md);
   line-height: 1.55;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -872,14 +1341,14 @@ kbd {
 
 .labeler-axis h4 {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--t-sm);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .labeler-axis-note {
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--muted);
   max-width: 62ch;
 }
@@ -910,7 +1379,7 @@ kbd {
 
 .labeler-choice-name {
   display: block;
-  font-size: 12.5px;
+  font-size: var(--t-md);
   font-weight: 600;
 }
 
@@ -921,7 +1390,7 @@ kbd {
 .labeler-tier {
   float: right;
   font-weight: 400;
-  font-size: 11px;
+  font-size: var(--t-xs);
   color: var(--faint);
 }
 
@@ -929,7 +1398,7 @@ kbd {
   display: block;
   margin-top: 3px;
   font-weight: 400;
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   line-height: 1.4;
   color: var(--muted);
 }
@@ -944,11 +1413,63 @@ kbd {
 }
 
 .labeler-hint {
-  font-size: 11.5px;
+  font-size: var(--t-sm);
   color: var(--faint);
 }
 
+/* --- responsive --------------------------------------------------------- */
+
+/* Tablet. Previously unconsidered: the only breakpoint in the file was 560px,
+   so between roughly 560 and 900 the bar rows kept three fixed-width columns
+   (118 + 92 + 62px) and squeezed the track they exist to make room for. */
+@media (max-width: 900px) {
+  /* The sidebar becomes a drawer: off-canvas, over the content rather than
+     beside it, and reachable from the top bar. */
+  .topbar {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+    box-shadow: var(--shadow);
+  }
+
+  .drawer-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .drawer-open .drawer-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 18;
+    background: rgb(0 0 0 / 45%);
+  }
+
+  .content {
+    margin-left: 0;
+    padding: var(--s5) var(--s4) var(--s7);
+  }
+
+  .app {
+    padding: var(--s5) var(--s4) var(--s7);
+  }
+  .bar-row .name {
+    width: 104px;
+  }
+  .bar-row .amount {
+    width: 84px;
+  }
+  section {
+    margin-top: var(--s5);
+  }
+}
+
 @media (max-width: 560px) {
+  .app {
+    padding: var(--s4) var(--s3) var(--s6);
+  }
   .bar-row .name {
     width: 88px;
   }
@@ -958,5 +1479,27 @@ kbd {
   /* Keyboard hints are for a keyboard. */
   .labeler-hint {
     display: none;
+  }
+  /* Stat cards read as a list rather than a cramped two-up grid. */
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  /* A full-width action is easier to hit than a shrink-wrapped one. */
+  .drop-actions button,
+  .drop-actions .button-like {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+/* Honour the OS setting rather than animating regardless. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

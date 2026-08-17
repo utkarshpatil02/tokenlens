@@ -1,5 +1,6 @@
 import type { LeaderboardRow } from '../types'
 import { compact, truncate, usd } from '../format'
+import { Icon } from './ui/Icon'
 
 /**
  * Worst turns by dollar waste.
@@ -11,8 +12,12 @@ import { compact, truncate, usd } from '../format'
 export function Leaderboard({ rows }: { rows: LeaderboardRow[] }) {
   if (!rows.length) {
     return (
-      <div className="panel">
-        <p style={{ margin: 0, color: 'var(--muted)' }}>No scored turns yet.</p>
+      <div className="panel empty-state">
+        <Icon name="info" size={18} />
+        <p>No scored turns yet.</p>
+        <span className="section-note">
+          Judge a few prompts and the worst offenders appear here, worst first.
+        </span>
       </div>
     )
   }
@@ -60,7 +65,7 @@ export function Leaderboard({ rows }: { rows: LeaderboardRow[] }) {
                   <span className={`pill band-${row.band}`}>{row.normalized}</span>
                 </div>
               </td>
-              <td style={{ minWidth: 190 }}>
+              <td className="rec-cell">
                 {row.recommendation}
                 {row.excess_tokens > 0 && (
                   <div className="rationale">
